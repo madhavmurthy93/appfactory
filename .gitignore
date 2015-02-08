@@ -1,2 +1,5 @@
 # Dependency directory
 node_modules
+
+# for OS X
+.DS_Store
