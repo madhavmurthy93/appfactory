@@ -5,7 +5,7 @@ var cool = require('cool-ascii-faces');
 /* GET home page. */
 router.get('/', function(req, res, next) {
     //res.render('index', { title: 'AppFactory' });
-    response.send(cool());
+    res.send(cool());
 });
 
 module.exports = router;
