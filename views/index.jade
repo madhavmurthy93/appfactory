@@ -4,6 +4,6 @@ block content
   h1= title
   p Welcome to #{title}
   p MySql connected: #{mysql_connected}
-  ol
+  ul
     each val in users
-      li #{val.id}: #{val.name}
+      li id(#{val.id}): #{val.name}

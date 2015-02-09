@@ -22,6 +22,7 @@ router.get('/', function(req, res, next) {
 	    console.log('MySql error: ', err);
 	    data.mysql_connected = 'Nope'
 	} else {
+	    data.mysql_connected = true
 	    data.users = rows;
 	}
 	res.render('index', data);
