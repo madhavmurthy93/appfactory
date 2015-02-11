@@ -1,0 +1,10 @@
+html
+  head
+    title AppFactory
+  body
+    h1= title
+    p Welcome to #{title}
+    p MySql connected: #{mysql_connected}
+    ul
+      each val in users
+        li id(#{val.id}): #{val.name}
