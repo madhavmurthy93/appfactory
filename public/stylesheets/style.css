@@ -19,3 +19,13 @@ a {
 #short {
 	width: 970px;
 }
+
+#email {
+	margin-left: auto;
+	margin-right: auto;
+	float: none;
+}
+
+.light {
+	font-weight: 200;
+}

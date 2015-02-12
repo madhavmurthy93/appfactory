@@ -29,4 +29,9 @@ router.get('/', function(req, res, next) {
     });
 });
 
+router.get('/browse', function(req, res, next) {
+	// theoratically collect data from db and send to browser
+	res.render('browse');
+})
+
 module.exports = router;
