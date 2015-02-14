@@ -24,18 +24,20 @@ router.post('/',
 	    function(req, res){
 		var imagePath = req.files.displayImage.path;
 		var imageName = req.files.displayImage.name;
-		/*
-		var readStream = fs.createReadStream(
-		    imagePath);
-		readStream.pipe(res);
-		*/
 
+		var readStream =
+		    fs.createReadStream(req.files.displayImage.buffer);
+		//var readStream = fs.createReadStream(
+		//    imagePath);
+		readStream.pipe(res);
+
+		/*
 		console.log('Post handler.', req.files)
 		var html = 'Hello ' + req.body.name + '.<br>' +
 		    '<img src="/idea/thumbs/' + imageName + '"><br>' +
 		    '<a href="/idea">Try again.</a>';
 		    res.send(html);
-
+		    */
 	    });
 
 

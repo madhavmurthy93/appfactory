@@ -9,6 +9,10 @@ node_modules
 
 # Ignore local batch file to connect to heroku MySql.
 af_mysql.bat
+af_local_mysql.bat
 
 # emacs backup files
 *~
+
+# ignore shell script OS X
+*.sh
