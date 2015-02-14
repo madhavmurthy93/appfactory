@@ -71,12 +71,17 @@ router.post('/',
 		    connection.connect();
 
 		    console.log('Request body:', req.body);
+		    var image = '';
+		    if (req.files && req.files.displayImage &&
+			req.files.displayImage.buffer) {
+			image = req.files.displayImage.buffer;
+		    }
 		    connection.query(
 			'INSERT INTO ideas '
 			+ '(id, name, summary, thumbnail, description) '
 			+ 'VALUES (?,?,?,?,?)',
 			[ideaId, req.body.name, req.body.summary,
-			 req.files.displayImage.buffer, req.body.description],
+			 image, req.body.description],
 			function(err) {
 			    connection.end();
 			    console.log('Insert done:', err);
@@ -86,9 +91,6 @@ router.post('/',
 				err.status = 500;
 				next(err);
 			    } else {
-				var imagePath = req.files.displayImage.path;
-				var imageName = req.files.displayImage.name;
-
 				console.log('Post handler.', req.files)
 				var html = 'Hello ' + req.body.name + '.<br>' +
 				    '<img src="/idea/thumbs/' + ideaId + '"><br>' +
@@ -101,8 +103,8 @@ router.post('/',
 
 
 router.get('/thumbs/*', function(req, res) {
-    var imageName = req.path.split('/')[2];
-    console.log('Thumbs image:', imageName);
+    var ideaId = req.path.split('/')[2];
+    console.log('Thumbs image:', ideaId);
 
     connection_config = {
 	host     : process.env.MYSQL_HOST,
@@ -116,15 +118,25 @@ router.get('/thumbs/*', function(req, res) {
     connection.connect();
 
     console.log('Querying DB...');
-    connection.query('SELECT thumbnail FROM ideas WHERE id=?', [imageName],
+    connection.query('SELECT thumbnail FROM ideas WHERE id=?', [ideaId],
 		     function(err, rows, fields) {
 			 console.log('Results:', err, rows, fields);
 			 connection.end();
 			 console.log('Row length:', rows.length);
-			 if (rows.length == 1) {
+			 if (rows.length == 1 && rows[0].thumbnail.length > 0) {
 			     res.send(rows[0].thumbnail);
+			 } else {
+			     var readStream = fs.createReadStream('./public/images/no_image.gif');
+			     readStream.pipe(res);
 			 }
 		     });
 });
+
+// The idea detail page.
+router.get('/*', function(req, res) {
+    var ideaId = req.path.split('/')[1];
+    res.render('ideaDetail', {id: ideaId});
+});
+
 
 module.exports = router;

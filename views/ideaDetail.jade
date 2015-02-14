@@ -1,0 +1,16 @@
+extends layout
+
+block content
+  p
+    Idea Name: #{id}
+  p
+    img(src="/idea/thumbs/#{id}")
+  p
+    label(for="name") Brief Description
+    input(type="text", name="summary", placeholder="...")
+    | This description will appear when browsing ideas from AppFactory's
+    | home page.
+  p
+    label(for="name") Full Description
+    input(type="text", name="description", placeholder="...")
+    | This description goes on your idea's Details page.
