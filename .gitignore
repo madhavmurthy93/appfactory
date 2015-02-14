@@ -12,3 +12,6 @@ af_mysql.bat
 
 # emacs backup files
 *~
+
+# ignore shell script OS X
+*.sh
