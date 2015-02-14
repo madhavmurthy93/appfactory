@@ -1,66 +1,17 @@
 extends layout
 
 block content
-	nav.navbar.navbar-default.navbar-static-top
-		div.container
-			div.navbar-header
-				button.navbar-toggle.collapsed(type='button' data-toggle='collapse' data-target='#bs-example-navbar-collapse-1')
-					span.sr-only Toggle navigation
-					span.icon-bar
-					span.icon-bar
-					span.icon-bar
-				a.navbar-brand(href='/') AppFactory
+	div.container
+		div.row
+			- var n = 0
+			while n < 3
+				div.col-sm-6.col-md-4
+					div.thumbnail
+						img(src='/images/placeholder.gif' alt='placeholder')
+						div.caption
+							h3.bold Idea Title
+							p.light 
+								| Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec 
+								| id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies 
 
-			div.collapse.navbar-collapse#bs-example-navbar-collapse-1
-				ul.nav.navbar-nav
-					li.active
-						a(href='#') About
-
-	div.container#short
-		div.jumbotron
-			h1 Our Vision
-			p.bold 
-				| AppFactory is a platform to match idea creators with developers and designers 
-				| to create mobile apps. It enables free collaboration to transform ideas into reality. 
-				| For developers, AppFactory is a great way to work on exciting projects, build your reputation, 
-				| develop new skills and advance your career.
-			p 
-				| Have you ever felt that you have a great mobile app idea, but can’t build it because 
-				| you don’t have coding skills? Have you ever felt that you have the coding skills, 
-				| but no exciting projects to work on? Then App Factory is just for you! 
-				| AppFactory provides tools and services to both inventors and the developer community to implement ideas, 
-				| and it streamlines the app development process.
-			p 
-				| The platform provides feedback and ratings to help refine app ideas and also helps 
-				| build a team to transform the ideas into reality. AppFactory aims to help people in 
-				| every stage of app development by providing them the right set of tools and matching them up 
-				| with right set of people at the right points in time. Anyone who makes a significant contribution 
-				| to a successful app gets a share of the profit.
-			p
-				span.bold Submit your idea! 
-				| We connect someone who has an idea with a group of people who can create it.  Add it to the 
-				| marketplace and find interested developers.
-			p
-				span.bold Build momentum around the idea!  
-				| The AppFactory community provides feedback and ratings for your ideas 
-				| and helps transform good ideas into great ideas.
-			p
-				span.bold Build your team! 
-				| AppFactory connects you with app developers who are interested in your idea and 
-				| committed to helping you create a great app.
-			p
-				span.bold Design, Build and Test! 
-				| Use AppFactory’s tools to brainstorm, collaborate, build, and test the app. 
-				| We have tools to create mockups on your phone, beta-test your apps and a lot more. 
-			p
-				span.bold Sell and share the profits! 
-				| AppFactory publishes the app to the Google Play Store and the Apple App Store. 
-				| The revenue generated is distributed among the inventors and developers who built the application. 
-			p
-				span.bold We make money when you make money! 
-				| Once a project is green lit, we're just as committed to its success as you are. 
-				| We help guide the project as needed, we can help arrange testers, guide it through 
-				| the submission process, connect with your customers, and help with marketing.
-			p
-				span.bold Make an impact! 
-				| Unleash your creativity to build meaningful products that improve peoples' lives.
+				- n++
