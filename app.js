@@ -25,7 +25,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
-app.use('/login', login);
+app.use('/auth', login);
 app.use('/idea', idea);
 app.use('/testdb', testdb);
 
