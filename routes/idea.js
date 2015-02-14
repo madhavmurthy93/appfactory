@@ -14,8 +14,7 @@ router.get('/', function(req, res) {
 // As explained above, usage of 'body-parser' means
 // that `req.body` will be filled in with the form elements
 router.post('/',
-	    multer({dest: './idea/',
-		    inmemory: true,
+	    multer({dest: './idea_images/',
 		    limits:{fileSize: 1024*1024,
 			    files: 1},
 		    onFileUploadComplete: function (file) {
@@ -44,6 +43,10 @@ router.post('/',
 
 router.get('/thumbs/*', function(req, res) {
     console.log('Thumbs image:', req.path.split('/')[2]);
+    var imagePath = './idea_images/'
+    var readStream = fs.createReadStream(
+	imagePath);
+		readStream.pipe(res);
     res.send('');
 });
 
