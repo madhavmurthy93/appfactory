@@ -7,7 +7,7 @@ node_modules
 # Heroku foreman local configuration
 .env
 
-# Local mysql batch file...
+# Ignore local batch file to connect to heroku MySql.
 af_mysql.bat
 
 # emacs backup files
