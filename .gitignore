@@ -6,3 +6,6 @@ node_modules
 
 # emacs backup files
 *~
+
+# Ignore shell script OS X
+*.sh
