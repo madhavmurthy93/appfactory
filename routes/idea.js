@@ -70,9 +70,13 @@ router.post('/',
 		    console.log('Connecting...');
 		    connection.connect();
 
+		    console.log('Request body:', req.body);
 		    connection.query(
-			'INSERT INTO ideas (id, thumbnail) ' +
-			    'VALUES (?,?)', [ideaId, req.files.displayImage.buffer],
+			'INSERT INTO ideas '
+			+ '(id, name, summary, thumbnail, description) '
+			+ 'VALUES (?,?,?,?,?)',
+			[ideaId, req.body.name, req.body.summary,
+			 req.files.displayImage.buffer, req.body.description],
 			function(err) {
 			    connection.end();
 			    console.log('Insert done:', err);
