@@ -6,7 +6,7 @@ block content
 			each idea in ideas
 				div.col-sm-6.col-md-4
 					div.thumbnail
-						img(src='/images/no_image.gif' alt='no_image')
+						img(src='/idea/thumbs/' + idea.id, alt='idea_image')
 						div.caption
 							h3.bold #{idea.name}
 							p.light 
