@@ -20,6 +20,7 @@ passport.deserializeUser(function(id, done) {
     var connection = mysql.createConnection(connection_config);
     connection.connect();
     connection.query('SELECT * FROM users WHERE id = ?', [id], function(err, rows) {
+    	connection.end();
     	if (!err) {
     		done(null, rows[0]);
     	} else {
@@ -49,6 +50,7 @@ passport.use(new FacebookStrategy({
 	    		console.log(err);
 	    	}
 	    	if (!err && rows.length != 0) {
+	    		connection.end();
 	    		done(null, rows[0]);
 	    	} else {
 	    		var user = {id: profile._json.id, name: profile._json.name, description: ''};
