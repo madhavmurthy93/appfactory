@@ -2,8 +2,9 @@ var express = require('express');
 var fs = require('fs');
 var gm = require('gm');
 var multer = require('multer');
-var router = express.Router();
 var mysql = require('mysql');
+var router = express.Router();
+var Promise = require('promise');
 
 
 var THUMBNAIL_SIZE = {
