@@ -21,7 +21,7 @@ router.post('/', function(req, res, next) {
     var connection = mysql.createConnection(connection_config);
     connection.connect();
     var entry = {name: req.body.name, email: req.body.email, comment: req.body.comment};
-    connection.query('INSERT INTO contact_us_emails SET ?', entry, function(err, result) {
+    connection.query('INSERT INTO contact_us_emails SET ?', entry, function(err) {
     	connection.end();
     	if (err) {
     		console.log(err);
