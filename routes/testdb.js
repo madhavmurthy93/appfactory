@@ -1,39 +1,23 @@
 var express = require('express');
 var router = express.Router();
-var mysql = require('mysql');
+var sql = require('../util/sql');
 
 
 /* TestDB page. */
 router.get('/', function(req, res, next) {
-    connection_config = {
-	host     : process.env.MYSQL_HOST,
-	user     : process.env.MYSQL_USER,
-	password : process.env.MYSQL_PW,
-	database : process.env.MYSQL_DB
-    }
-    console.log('Creating connection...');
-    var connection = mysql.createConnection(connection_config);
-    console.log('Connecting...');
-    connection.connect();
-
-    console.log('Querying DB...');
-    connection.query('SELECT id, name FROM users', function(err, rows, fields) {
-	console.log('Results:', err, rows, fields);
-	connection.end()
-	data = { title: 'AppFactory',
-		 mysql_connected: false,
-		 users: []}
-	if (err) {
+    sql.SimpleQueryPromise('SELECT id, name FROM users')
+	.then(function(rows) {
+	    data = { title: 'AppFactory',
+		     mysql_connected: true,
+		     users: rows}
+	    res.render('testdb', data);
+	}, function(err) {
+	    data = { title: 'AppFactory',
+		     mysql_connected: 'Nope',
+		     users: []}
 	    console.log('MySql error: ', err);
-	    data.mysql_connected = 'Nope'
-	} else {
-	    data.mysql_connected = true
-	    data.users = rows;
-	}
-	console.log('Rendering...');
-	res.render('testdb', data);
-	console.log('Done.');
-    });
+	    res.render('testdb', data);
+	});
 });
 
 module.exports = router;
