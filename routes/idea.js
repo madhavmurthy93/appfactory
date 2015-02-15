@@ -2,7 +2,7 @@ var express = require('express');
 var fs = require('fs');
 var gm = require('gm');
 var multer = require('multer');
-var mysql = require('mysql');
+var sql = require('../util/sql');
 var router = express.Router();
 var Promise = require('promise');
 
@@ -10,13 +10,6 @@ var Promise = require('promise');
 var THUMBNAIL_SIZE = {
     width: 350,
     height: 300
-};
-
-var connection_config = {
-    host     : process.env.MYSQL_HOST,
-    user     : process.env.MYSQL_USER,
-    password : process.env.MYSQL_PW,
-    database : process.env.MYSQL_DB
 };
 
 
@@ -28,25 +21,18 @@ router.get('/', function(req, res) {
 
 // Find an unused Idea ID from the SQL database, and return it.
 var GetNextAvailableIdeaId = function() {
-    return new Promise(function(resolve, reject) {
-	var connection = mysql.createConnection(connection_config);
-	connection.connect();
-
-	connection.query(
-	    'SELECT id FROM ideas ORDER BY id DESC LIMIT 1',
-	    function(err, rows) {
-		connection.end();
-		if (err) {
-		    reject(err);
-		}
+    return sql.SimpleQueryPromise(
+	'SELECT id FROM ideas ORDER BY id DESC LIMIT 1')
+	.then(function(rows) {
+	    return new Promise(function(resolve, reject) {
 		var nextId = 0;
 		if (rows.length > 0) {
 		    nextId = rows[0].id + 1;
 		}
 		resolve(nextId);
-	    });
-    });
-};
+	    })
+	});
+}
 
 
 var GetImage = function(req) {
@@ -80,9 +66,7 @@ var GetImage = function(req) {
 var InsertIntoDb = function(req, ideaId, image) {
     return new Promise(function(resolve, reject) {
 	console.log('Creating connection...');
-	var connection = mysql.createConnection(connection_config);
-	console.log('Connecting...');
-	connection.connect();
+	var connection = sql.OpenConnection();
 
 	console.log('Request body:', req.body);
 	console.log('Img: ', image);
@@ -165,46 +149,40 @@ router.post('/',
 router.get('/thumbs/:ideaId', function(req, res) {
     var ideaId = req.params.ideaId;
     console.log('Thumb:', ideaId);
-    var connection = mysql.createConnection(connection_config);
-    connection.connect();
-    connection.query('SELECT thumbnail FROM ideas WHERE id=?', [ideaId],
-		     function(err, rows, fields) {
-			 connection.end();
-			 console.log('Thumb rows:', rows);
-			 console.log('Thumb len:', rows[0].thumbnail.length);
-			 if (rows.length == 1 && rows[0].thumbnail.length > 0) {
-			     res.send(rows[0].thumbnail);
-			 } else {
-			     var readStream = fs.createReadStream(
-				 './public/images/no_image.gif');
-			     readStream.pipe(res);
-			 }
-		     });
+    sql.SimpleQueryPromise('SELECT thumbnail FROM ideas WHERE id=?', [ideaId])
+	.then(function(rows) {
+	    if (rows.length == 1 && rows[0].thumbnail.length > 0) {
+		console.log('Returning thumbnail for', ideaId);
+		res.send(rows[0].thumbnail);
+	    } else {
+		console.log('No thumbnail for', ideaId);
+		var readStream = fs.createReadStream(
+		    './public/images/no_image.gif');
+		readStream.pipe(res);
+	    }
+	});
 });
 
 
 // The idea detail page.
 router.get('/:ideaId', function(req, res) {
     var ideaId = req.params.ideaId;
-    var connection = mysql.createConnection(connection_config);
-    connection.connect();
-    connection.query('SELECT id, name, summary, description '
-		     + 'FROM ideas WHERE id=?',
-		     [ideaId],
-		     function(err, rows, fields) {
-			 connection.end();
-			 if (err) throw err;
-			 if (rows.length != 1) {
-			     var err = new Error('Rows != 1. Rows ='
-						 + rows.length);
-			     err.status = 500;
-			     throw err;
-			 }
-			 console.log('Rendering row:', rows[0]);
-			 res.render('ideaDetail', {
-			     idea: rows[0]
-			 });
-		     });
+    sql.SimpleQueryPromise('SELECT id, name, summary, description '
+			   + 'FROM ideas WHERE id=?', [ideaId])
+	.then(function(rows) {
+	    if (rows.length == 0) {
+		var err = new Error('Idea ' + ideaId + ' not found');
+		err.status = 404;
+		throw err;
+	    }
+	    if (rows.length > 1) {
+		console.log('Idea ' + ideaId + ' has too many entries:',
+			    rows.length);
+	    }
+	    res.render('ideaDetail', {
+		idea: rows[0]
+	    });
+	});
 });
 
 
