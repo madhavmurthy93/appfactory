@@ -20,7 +20,7 @@ var connection_config = {
 };
 
 
-/* GET idea page. */
+// Create an idea page. This is where users enter info for a new idea.
 router.get('/', function(req, res) {
     res.render('idea');
 });
@@ -109,12 +109,45 @@ var InsertIntoDb = function(req, ideaId, image) {
 };
 
 
+var HasNonWhitespaceContent = function(stringValue) {
+    // Allow undefined values and change them to ''.
+    // Trim any outer whitespace.
+    var trimmed = (stringValue || '').trim();
+    return trimmed.length > 0;
+}
+
+
+// Validates the input when creating an idea.  Verify that all
+// required fields are filled in and the information looks good.
+var ValidateIdeaInput = function(req) {
+    // Make sure the user supplied a name.
+    if (!HasNonWhitespaceContent(req.body.name)) {
+	throw new Error('Name not provided.');
+    }
+
+    // TODO: Check if the name already exists.
+
+    // Make sure the user supplied a summary.
+    if (!HasNonWhitespaceContent(req.body.summary)) {
+	throw new Error('Brief description not provided.');
+    }
+
+    // Make sure the user supplied a description.
+    if (!HasNonWhitespaceContent(req.body.description)) {
+	throw new Error('Full description not provided.');
+    }
+};
+
+
+// Supply data to the server for a new idea.  This will create an
+// entry for the idea and redirect to the idea page.
 router.post('/',
 	    multer({dest: './idea_images/',
 		    limits:{fileSize: 10 * 1024*1024,
 			    files: 1},
 		    inMemory: true}),
 	    function(req, res, next) {
+		ValidateIdeaInput(req);
 		GetNextAvailableIdeaId()
 		    .then(function(ideaId) {
 			GetImage(req).then(function(image) {
