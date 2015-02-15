@@ -32,7 +32,7 @@ passport.deserializeUser(function(id, done) {
 passport.use(new FacebookStrategy({
 	clientID: '857739407615807',
 	clientSecret: '188e497c70b716dfed42e5d680a4ec41',
-	callbackURL: 'http://localhost:3000/auth/facebook/callback'
+	callbackURL: 'https://uw-app-factory.herokuapp.com/auth/facebook/callback'
 	},
 	function(accessToken, refreshToken, profile, done) {
 		// connect to the mysql database
