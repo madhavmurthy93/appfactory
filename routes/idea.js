@@ -8,8 +8,8 @@ var Promise = require('promise');
 
 
 var THUMBNAIL_SIZE = {
-    width: 200,
-    height: 200
+    width: 350,
+    height: 300
 };
 
 var connection_config = {
