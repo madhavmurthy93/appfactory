@@ -12,6 +12,9 @@ router.get('/', function(req, res, next) {
 		     users: rows}
 	    res.render('testdb', data);
 	}, function(err) {
+	    // Error handler.  If this isn't provided, the error
+	    // will be propagated to the caller, or to later promises
+	    // in the chain.
 	    data = { title: 'AppFactory',
 		     mysql_connected: 'Nope',
 		     users: []}
