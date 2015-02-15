@@ -1,0 +1,11 @@
+extends layout
+
+block content
+  p
+    | Idea ID: #{idea.id}<br>
+    | Idea Name: #{idea.name}
+  p
+    img(src="/idea/thumbs/" + idea.id)
+  p
+    | Summary: #{idea.summary}<br>
+    | Description: #{idea.description}
