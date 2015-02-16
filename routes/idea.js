@@ -152,6 +152,7 @@ router.get('/thumbs/:ideaId', function(req, res) {
 router.get('/:ideaId', function(req, res) {
     var ideaId = req.params.ideaId;
     var idea;
+    var screenshotIds;
     sql.SimpleQueryPromise('SELECT id, name, summary, description '
 			   + 'FROM ideas WHERE id=?', [ideaId])
 	.then(function(rows) {
@@ -169,14 +170,28 @@ router.get('/:ideaId', function(req, res) {
 	    // Check for any screenshots associated with this idea.
 	    return sql.SimpleQueryPromise('SELECT id FROM idea_images '
 					  + 'WHERE idea = ?', [ideaId]);
-	})
-	.then(function(screenshotIds) {
-	    res.render('ideaDetail', {
-		idea: idea,
-		screenshotIds: screenshotIds.map(function(item) {
-		    return item.id;
-		})
+	}).then(function(screenshotRows) {
+	    // Convert SQL rows to an array of just the ID values.
+	    screenshotIds = screenshotRows.map(function(item) {
+		return item.id;
 	    });
+	    // Check if this user has voted on this item.
+	    return sql.SimpleQueryPromise(
+		'SELECT amount FROM user_votes WHERE idea=? AND user=?',
+		[ideaId, '10203924794701033'])
+	}).then(function(rows) {
+	    var vote = undefined;
+	    if (rows.length == 1) {
+		vote = rows[0].amount;
+	    }
+	    res.render('voting', {
+		idea: idea,
+		screenshotIds: screenshotIds,
+		user_vote: vote
+	    });
+	}).catch(function(err) {
+	    console.log(err);
+	    throw err;
 	});
 });
 
@@ -271,6 +286,20 @@ router.get('/:ideaId/screenthumbs/:screenId.jpg', function(req, res, next) {
 		})
 
 	});
+});
+
+
+// Vote on an idea.
+router.post('/:ideaId/vote', function(req, res, next) {
+    var ideaId = req.params.ideaId;
+    var vote = req.body.vote;
+    sql.SimpleQueryPromise(
+	'INSERT INTO user_votes (user, idea, amount) VALUES (?, ?, ?) '
+	+ 'ON DUPLICATE KEY UPDATE user=VALUES(user), idea=VALUES(idea), '
+            + 'amount=VALUES(amount)', ['10203924794701033', ideaId, vote])
+	.then(function() {
+	    res.redirect('/idea/' + ideaId);
+	}).catch(function(err) { if (err) throw err; });
 });
 
 
