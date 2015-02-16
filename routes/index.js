@@ -5,7 +5,6 @@ var mysql = require('mysql');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-	console.log(req.session.passport);
     connection_config = {
     host     : process.env.MYSQL_HOST,
     user     : process.env.MYSQL_USER,
