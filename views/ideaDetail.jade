@@ -6,6 +6,19 @@ block content
     | Idea Name: #{idea.name}
   p
     img(src="/idea/thumbs/" + idea.id)
+  if screenshotIds.length > 0
+    div Screenshots
+      each imageId in screenshotIds
+        a(href="/idea/" + idea.id + "/screens/" + imageId + ".jpg")
+          img(src="/idea/" + idea.id + "/screenthumbs/" + imageId + ".jpg")
   p
     | Summary: #{idea.summary}<br>
     | Description: #{idea.description}
+  div
+    form(action="/idea/" + idea.id + "/screens",
+         method="post", enctype="multipart/form-data")
+      p
+        label(for="screenshot") Add a screenshot
+        input(type="file", name="screenshot", accept="image/*")
+      p
+        input(type="submit")

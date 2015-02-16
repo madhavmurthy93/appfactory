@@ -32,7 +32,7 @@ var SimpleQueryPromise = function(query, params) {
 	var connection = OpenConnection();
 	connection.query(query, params, function(err, rows) {
 	    connection.end();
-	    if (err) reject(err);
+	    if (err) throw err;
 	    resolve(rows);
 	});
     });

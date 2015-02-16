@@ -12,6 +12,11 @@ var THUMBNAIL_SIZE = {
     height: 300
 };
 
+var SCREENSHOT_SIZE = {
+    width: 1024,
+    height: 768
+};
+
 
 // Create an idea page. This is where users enter info for a new idea.
 router.get('/', function(req, res) {
@@ -19,10 +24,11 @@ router.get('/', function(req, res) {
 });
 
 
-// Find an unused Idea ID from the SQL database, and return it.
-var GetNextAvailableIdeaId = function() {
+// Find an unused ID from the given table and return it.  This returns
+// a promise that will provide the next available ID.
+var GetNextAvailableIdeaId = function(table) {
     return sql.SimpleQueryPromise(
-	'SELECT id FROM ideas ORDER BY id DESC LIMIT 1')
+	'SELECT id FROM ' + table + ' ORDER BY id DESC LIMIT 1')
 	.then(function(rows) {
 	    return new Promise(function(resolve, reject) {
 		var nextId = 0;
@@ -35,24 +41,22 @@ var GetNextAvailableIdeaId = function() {
 }
 
 
-var GetImage = function(req) {
+var GetImage = function(req, propertyName, size) {
     return new Promise(function(resolve, reject) {
 	var image = '';
-	console.log('Starting GetImage, files:', req.files);
-	if (req.files && req.files.displayImage &&
-	    req.files.displayImage.buffer) {
-	    var buffer = req.files.displayImage.buffer;
+	if (req.files && req.files[propertyName] &&
+	    req.files[propertyName].buffer) {
+	    var buffer = req.files[propertyName].buffer;
 
 	    // Resize the image to thumbnail size.
 	    console.log('Processing image...');
 	    gm(buffer, 'tmpImage.jpg')
-		.resize(THUMBNAIL_SIZE.width, THUMBNAIL_SIZE.height)
+		.resize(size.width, size.height)
 		.toBuffer('JPG', function(err, buf) {
 		    if (err) {
 			console.log('Rejecting image:', err);
 			reject(err);
 		    } else {
-			console.log('Resolved.');
 			resolve(buf);
 		    }
 		});
@@ -65,18 +69,14 @@ var GetImage = function(req) {
 
 var InsertIntoDb = function(req, ideaId, image) {
     return new Promise(function(resolve, reject) {
-	console.log('Creating connection...');
 	var connection = sql.OpenConnection();
 
-	console.log('Request body:', req.body);
-	console.log('Img: ', image);
-	console.log('Inserting into DB...');
 	connection.query(
 	    'INSERT INTO ideas '
 		+ '(id, name, summary, thumbnail, description) '
 		+ 'VALUES (?,?,?,?,?)',
-	    [ideaId, req.body.name, req.body.summary,
-	     image, req.body.description],
+	    [ideaId, req.body.name.trim(), req.body.summary.trim(),
+	     image, req.body.description.trim()],
 	    function(err) {
 		connection.end();
 		console.log('Insert done:', err);
@@ -132,15 +132,16 @@ router.post('/',
 		    inMemory: true}),
 	    function(req, res, next) {
 		ValidateIdeaInput(req);
-		GetNextAvailableIdeaId()
+		GetNextAvailableIdeaId('ideas')
 		    .then(function(ideaId) {
-			GetImage(req).then(function(image) {
-			    console.log('Set ideaId to', ideaId);
-			    console.log('Image:', image);
-			    InsertIntoDb(req, ideaId, image).then(function() {
-				res.redirect('/idea/' + ideaId);
+			GetImage(req, 'displayImage', THUMBNAIL_SIZE)
+			    .then(function(image) {
+				console.log('Set ideaId to', ideaId);
+				InsertIntoDb(req, ideaId, image)
+				    .then(function() {
+					res.redirect('/idea/' + ideaId);
+				    });
 			    });
-			});
 		    });
 	    });
 
@@ -148,12 +149,11 @@ router.post('/',
 // Return thumbnail images.
 router.get('/thumbs/:ideaId', function(req, res) {
     var ideaId = req.params.ideaId;
-    console.log('Thumb:', ideaId);
     sql.SimpleQueryPromise('SELECT thumbnail FROM ideas WHERE id=?', [ideaId])
 	.then(function(rows) {
 	    if (rows.length == 1 && rows[0].thumbnail.length > 0) {
-		console.log('Returning thumbnail for', ideaId);
-		res.send(rows[0].thumbnail);
+		res.writeHead(200, {'Content-Type': 'image/jpg'});
+		res.end(rows[0].thumbnail, 'binary');
 	    } else {
 		console.log('No thumbnail for', ideaId);
 		var readStream = fs.createReadStream(
@@ -167,6 +167,7 @@ router.get('/thumbs/:ideaId', function(req, res) {
 // The idea detail page.
 router.get('/:ideaId', function(req, res) {
     var ideaId = req.params.ideaId;
+    var idea;
     sql.SimpleQueryPromise('SELECT id, name, summary, description '
 			   + 'FROM ideas WHERE id=?', [ideaId])
 	.then(function(rows) {
@@ -179,9 +180,112 @@ router.get('/:ideaId', function(req, res) {
 		console.log('Idea ' + ideaId + ' has too many entries:',
 			    rows.length);
 	    }
+	    idea = rows[0];
+
+	    // Check for any screenshots associated with this idea.
+	    return sql.SimpleQueryPromise('SELECT id FROM idea_images '
+					  + 'WHERE idea = ?', [ideaId]);
+	})
+	.then(function(screenshotIds) {
 	    res.render('ideaDetail', {
-		idea: rows[0]
+		idea: idea,
+		screenshotIds: screenshotIds.map(function(item) {
+		    return item.id;
+		})
 	    });
+	});
+});
+
+
+var HandlePostScreen = function(req, res, next) {
+    var ideaId = req.params.ideaId;
+    var image;
+    // Don't allow too many images.
+    sql.SimpleQueryPromise('SELECT count(*) AS count FROM idea_images '
+			   + 'WHERE idea = ?', [ideaId])
+	.then(function(rows) {
+ 	    if (rows[0].count >= 8) {
+		throw Error('Too many screenshots.');
+	    }
+
+	    // Get and process the image in the request.
+	    return GetImage(req, 'screenshot', SCREENSHOT_SIZE);
+	}).then(function(gotImage) {
+	    image = gotImage;
+
+	    // Find the next available ID.
+	    return GetNextAvailableIdeaId('idea_images');
+	}).then(function(imageId) {
+	    // Add the screenshot to the database.
+	    return sql.SimpleQueryPromise('INSERT INTO idea_images '
+					  + '(id, idea, image) '
+					  + 'VALUES (?,?,?)',
+					  [imageId, ideaId, image]);
+	}).then(function() {
+	    res.redirect('/idea/' + ideaId);
+	}, function(err) {
+	    console.log('HandlePostScreen error:', err);
+	    next(err);
+	});
+}
+
+
+// Add a screenshot to an idea.
+router.post('/:ideaId/screens',
+	    multer({limits:{fileSize: 10 * 1024*1024,
+			    files: 4},
+		    inMemory: true}),
+	    HandlePostScreen);
+
+
+var GetScreenshot = function(ideaId, screenId) {
+    return sql.SimpleQueryPromise('SELECT image FROM idea_images '
+				  + 'WHERE id=? AND idea=?', [screenId, ideaId])
+	.then(function(rows) {
+	    // There should only be one row.
+	    if (rows.length == 0) {
+		var err = new Error('Screenshot not found.');
+		err.status = 404;
+		next(err);
+	    }
+	    if (rows.length > 1) {
+		console.log('Found multiple screenshots for idea('
+			    + ideaId + '), screenId(' + screenId + ')');
+	    }
+	    return new Promise(function(resolve) {
+		resolve(rows[0].image);
+	    });
+	});
+};
+
+
+
+// Retrieve a screenshot.
+router.get('/:ideaId/screens/:screenId.jpg', function(req, res, next) {
+    var ideaId = req.params.ideaId;
+    var screenId = req.params.screenId;
+    GetScreenshot(ideaId, screenId)
+	.then(function(image) {
+	    res.writeHead(200, {'Content-Type': 'image/jpg'});
+	    res.end(image, 'binary');
+	});
+});
+
+
+// Retrieve a screenshot thumbnail
+router.get('/:ideaId/screenthumbs/:screenId.jpg', function(req, res, next) {
+    var ideaId = req.params.ideaId;
+    var screenId = req.params.screenId;
+    GetScreenshot(ideaId, screenId)
+	.then(function(image) {
+	    gm(image, 'tmpImage.jpg')
+		.resize(THUMBNAIL_SIZE.width, THUMBNAIL_SIZE.height)
+		.toBuffer('JPG', function(err, resized) {
+		    if (err) throw err;
+		    res.writeHead(200, {'Content-Type': 'image/jpg'});
+		    res.end(resized, 'binary');
+		})
+
 	});
 });
 
