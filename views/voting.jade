@@ -1,0 +1,13 @@
+extends ideaDetail
+
+block voting
+  form(action='/idea/' + idea.id + '/vote' method='post')
+    if (user_vote != undefined)
+      div
+        | Your current vote: #{user_vote}
+    div
+      label(for='vote') DollarVote: 
+      input(type='number' min='0' max='10' step='1'
+            name='vote' placeholder='0')
+    div
+      input(type='submit')
