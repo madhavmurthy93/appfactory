@@ -68,28 +68,12 @@ var GetImage = function(req, propertyName, size) {
 
 
 var InsertIntoDb = function(req, ideaId, image) {
-    return new Promise(function(resolve, reject) {
-	var connection = sql.OpenConnection();
-
-	connection.query(
-	    'INSERT INTO ideas '
-		+ '(id, name, summary, thumbnail, description) '
-		+ 'VALUES (?,?,?,?,?)',
-	    [ideaId, req.body.name.trim(), req.body.summary.trim(),
-	     image, req.body.description.trim()],
-	    function(err) {
-		connection.end();
-		console.log('Insert done:', err);
-		if (err) {
-		    console.log('MySql error: ', err);
-		    var err = new Error('Database error: ' + err);
-		    err.status = 500;
-		    throw err;
-		} else {
-		    resolve();
-		}
-	    });
-    })
+    return sql.SimpleQueryPromise(
+	'INSERT INTO ideas '
+	    + '(id, name, summary, thumbnail, description) '
+	    + 'VALUES (?,?,?,?,?)',
+	[ideaId, req.body.name.trim(), req.body.summary.trim(),
+	 image, req.body.description.trim()]);
 };
 
 
