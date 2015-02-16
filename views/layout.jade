@@ -25,6 +25,9 @@ html
 							a(href='/idea') Create
 					ul.nav.navbar-nav.navbar-right
 						li
-							a(href='/auth/facebook' id='image') 
-								img(src='/images/facebook.png' alt='facebook')
+							if locals.user
+								a(href='#') #{user.name}
+							else
+								a(href='/auth/facebook' id='image')
+									img(src='/images/facebook.png' alt='facebook')
 	block content
