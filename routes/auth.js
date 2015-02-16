@@ -8,7 +8,7 @@ passport.serializeUser(function(user, done) {
 	done(null, user);
 });
 
-passport.deserializeUser(function(id, done) {
+passport.deserializeUser(function(user, done) {
 	// connect to the mysql database
 	connection_config = {
 	host     : process.env.MYSQL_HOST,
@@ -19,7 +19,7 @@ passport.deserializeUser(function(id, done) {
 
     var connection = mysql.createConnection(connection_config);
     connection.connect();
-    connection.query('SELECT * FROM users WHERE id = ?', [id], function(err, rows) {
+    connection.query('SELECT * FROM users WHERE id = ?', [user.id], function(err, rows) {
     	connection.end();
     	if (!err) {
     		done(null, rows[0]);
