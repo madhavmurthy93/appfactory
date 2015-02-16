@@ -1,21 +1,24 @@
 extends layout
 
 block content
-  form(action="/idea", method="post", enctype="multipart/form-data")
-    p
-      label(for="name") Idea Name
-      input(type="text", name="name", placeholder="...")
-    p
-      label(for="name") Brief Description
-      input(type="text", name="summary", placeholder="...")
-      | This description will appear when browsing ideas from AppFactory's
-      | home page.
-    p
-      label(for="name") Full Description
-      input(type="text", name="description", placeholder="...")
-      | This description goes on your idea's Details page.
-    p
-      label(for="displayImage") Thumbnail
-      input(type="file", name="displayImage", accept="image/*")
-    p
-      input(type="submit")
+  script(src='/javascripts/idea.js').
+  form.form-horizontal#padding-adjust(action='/idea' method='post' enctype='multipart/form-data')
+    div.form-group
+      label(for='name' class='col-sm-2 control-label') Title
+      div.col-sm-10
+        input.form-control(type='text' name='name' placeholder='Title')
+    div.form-group(data-toggle='tooltip' data-placement='top' title='This description will appear when browsing ideas from AppFactory home page.')
+      label(for='summary' class='col-sm-2 control-label') Summary
+      div.col-sm-10
+        textarea.form-control(rows='2' name='summary' placeholder='Summary')
+    div.form-group(data-toggle='tooltip' data-placement='top' title="This description goes on your idea's details page.")
+      label(for='description' class='col-sm-2 control-label') Description
+      div.col-sm-10
+        textarea.form-control(rows='4' name='description' placeholder='Description')
+    div.form-group
+      label(for='displayImage' class='col-sm-2 control-label') Thumbnail
+      div.col-sm-10
+        input(type='file' name='displayImage' accept='image/*') 
+    div.form-group
+      div.col-sm-offset-2.col-sm-10
+        button.btn.btn-primary(type='submit') Submit
