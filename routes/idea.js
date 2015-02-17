@@ -331,18 +331,44 @@ router.get('/:ideaId/screenthumbs/:screenId.jpg', function(req, res, next) {
 router.post('/:ideaId/vote', function(req, res, next) {
     var ideaId = req.params.ideaId;
     var vote = req.body.vote;
+    if (Array.isArray(req.body.vote)) {
+	// The form returns all buttons and inputs named 'vote', and we have
+	// to decide which one to choose.  The immediate action buttons come
+	// after the DollarVotes entry, so find which values are filled in
+	// and choose the last one.
+	var filledVotes = req.body.vote.filter(
+	    function(val) {return val != '';});
+	vote = filledVotes[filledVotes.length - 1];
+    }
 
     if (!res.locals.user) {
 	throw new Error('Must be logged in to vote.');
     }
 
-    sql.SimpleQueryPromise(
-	'INSERT INTO user_votes (user, idea, amount) VALUES (?, ?, ?) '
-	+ 'ON DUPLICATE KEY UPDATE user=VALUES(user), idea=VALUES(idea), '
-            + 'amount=VALUES(amount)', [res.locals.user.id, ideaId, vote])
-	.then(function() {
-	    res.redirect('/idea/' + ideaId);
-	}).catch(function(err) { if (err) throw err; });
+    if (vote == 0) {
+	// Remove the vote.
+	sql.SimpleQueryPromise(
+	    'DELETE FROM user_votes WHERE user=? AND idea=?',
+	    [res.locals.user.id, ideaId])
+	    .then(function() {
+		res.redirect('/idea/' + ideaId);
+	    }).catch(function(err) {
+		console.log(err);
+	    });
+    } else {
+	data = [res.locals.user.id, ideaId, vote];
+	console.log('Data is:', data);
+	sql.SimpleQueryPromise(
+	    'INSERT INTO user_votes (user, idea, amount) VALUES (?, ?, ?) '
+		+ 'ON DUPLICATE KEY UPDATE '
+		+ 'user=VALUES(user), idea=VALUES(idea), '
+		+ 'amount=VALUES(amount)', data)
+	    .then(function() {
+		res.redirect('/idea/' + ideaId);
+	    }).catch(function(err) {
+		console.log(err);
+	    });
+    }
 });
 
 
