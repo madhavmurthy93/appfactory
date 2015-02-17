@@ -165,6 +165,7 @@ router.get('/thumbs/:ideaId', function(req, res) {
 router.get('/:ideaId', function(req, res) {
     var ideaId = req.params.ideaId;
     var idea;
+    var comments;
     var screenshotIds;
     var userId=-1;
     if (res.locals.user) {
@@ -185,9 +186,15 @@ router.get('/:ideaId', function(req, res) {
 	    }
 	    idea = rows[0];
 
-	    // Check for any screenshots associated with this idea.
-	    return sql.SimpleQueryPromise('SELECT id FROM idea_images '
+	    // Check for comments associated with this idea.
+	    return sql.SimpleQueryPromise('SELECT contents FROM comments '
 					  + 'WHERE idea = ?', [ideaId]);
+	}).then(function(rows) {
+	    comments = rows;
+
+		    // Check for any screenshots associated with this idea.
+		    return sql.SimpleQueryPromise('SELECT id FROM idea_images '
+						  + 'WHERE idea = ?', [ideaId]);
 	}).then(function(screenshotRows) {
 	    // Convert SQL rows to an array of just the ID values.
 	    screenshotIds = screenshotRows.map(function(item) {
@@ -204,6 +211,7 @@ router.get('/:ideaId', function(req, res) {
 	    }
 	    res.render('comments', {
 		idea: idea,
+		comments: comments,
 		isOwner: idea.owner_id == userId,
 		isLoggedIn: userId != undefined,
 		screenshotIds: screenshotIds,
