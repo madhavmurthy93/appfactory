@@ -14,7 +14,7 @@ block comments
 								| #{comment.contents}
 			p
 				| 
-			form.form-horizontal(action='/about' method='post')
+			form.form-horizontal(action='/idea/' + idea.id + '/comment' method='post')
 				div.form-group
 					label(for='comment' class='col-sm-2 control-label') Add Comment
 					div.col-sm-10
