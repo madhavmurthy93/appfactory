@@ -47,9 +47,9 @@ passport.use(new FacebookStrategy({
 
 router.get('/facebook', passport.authenticate('facebook'));
 
-router.get('/facebook/callback',
-	   passport.authenticate('facebook',
-				 {successRedirect: '/',
-				  failureRedirect: '/about'}));
+router.get('/facebook/callback', 
+		  passport.authenticate('facebook',
+								{successRedirect: '/',
+								failureRedirect: '/about'}));
 
 module.exports = router;
