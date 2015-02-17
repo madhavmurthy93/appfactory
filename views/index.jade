@@ -2,13 +2,17 @@ extends layout
 
 block content
 	div.container
-		div.row
-			each idea in ideas
-				a(href="/idea/" + idea.id)
-					div.col-sm-6.col-md-4
-						div.thumbnail
-							img(src='/idea/thumbs/' + idea.id, alt='idea_image')
-							div.caption
-								h3.bold #{idea.name}
-								p.light 
-									| #{idea.summary}
+		- var n = 0
+		each idea in ideas
+			if (n % 3 == 0)
+				div.row
+			a(href="/idea/" + idea.id)
+				div.col-sm-6.col-md-4
+					div.thumbnail
+						img(src='/idea/thumbs/' + idea.id, alt='idea_image')
+						div.caption
+							h3.bold #{idea.name}
+							p.light 
+								| #{idea.summary}
+			- n++
+					
