@@ -67,13 +67,14 @@ var GetImage = function(req, propertyName, size) {
 };
 
 
-var InsertIntoDb = function(req, ideaId, image) {
-    return sql.SimpleQueryPromise(
-	'INSERT INTO ideas '
-	    + '(id, name, summary, thumbnail, description) '
-	    + 'VALUES (?,?,?,?,?)',
-	[ideaId, req.body.name.trim(), req.body.summary.trim(),
-	 image, req.body.description.trim()]);
+var InsertIntoDb = function(req, ideaId, image, ownerId) {
+    data = {id: ideaId,
+	    name: req.body.name.trim(),
+	    summary: req.body.summary.trim(),
+	    thumbnail: image,
+	    description: req.body.description.trim(),
+	    owner_id: ownerId}
+    return sql.SimpleQueryPromise('INSERT INTO ideas SET ?', data);
 };
 
 
@@ -115,17 +116,29 @@ router.post('/',
 			    files: 1},
 		    inMemory: true}),
 	    function(req, res, next) {
+		var ownerId;
+		var ideaId;
+		var image;
+		
+		if (res.locals.user) {
+		    ownerId = res.locals.user.id;
+		} else {
+		    throw new Error('Must be logged in to add an idea.');
+		}
+
 		ValidateIdeaInput(req);
 		GetNextAvailableIdeaId('ideas')
-		    .then(function(ideaId) {
-			GetImage(req, 'displayImage', THUMBNAIL_SIZE)
-			    .then(function(image) {
-				console.log('Set ideaId to', ideaId);
-				InsertIntoDb(req, ideaId, image)
-				    .then(function() {
-					res.redirect('/idea/' + ideaId);
-				    });
-			    });
+		    .then(function(ideaIdIn) {
+			ideaId = ideaIdIn;
+			console.log('Set ideaId to', ideaId);
+			return GetImage(req, 'displayImage', THUMBNAIL_SIZE);
+		    }).then(function(imageIn) {
+			image = imageIn;
+			return InsertIntoDb(req, ideaId, image, ownerId);
+		    }).then(function() {
+			res.redirect('/idea/' + ideaId);
+		    }).catch(function(err) {
+			console.log('Create idea error:', err);
 		    });
 	    });
 
@@ -153,7 +166,12 @@ router.get('/:ideaId', function(req, res) {
     var ideaId = req.params.ideaId;
     var idea;
     var screenshotIds;
-    sql.SimpleQueryPromise('SELECT id, name, summary, description '
+    var userId=-1;
+    if (res.locals.user) {
+	userId = res.locals.user.id;
+    }
+
+    sql.SimpleQueryPromise('SELECT id, name, summary, description, owner_id '
 			   + 'FROM ideas WHERE id=?', [ideaId])
 	.then(function(rows) {
 	    if (rows.length == 0) {
@@ -178,7 +196,7 @@ router.get('/:ideaId', function(req, res) {
 	    // Check if this user has voted on this item.
 	    return sql.SimpleQueryPromise(
 		'SELECT amount FROM user_votes WHERE idea=? AND user=?',
-		[ideaId, '10203924794701033'])
+		[ideaId, userId]);
 	}).then(function(rows) {
 	    var vote = undefined;
 	    if (rows.length == 1) {
@@ -186,6 +204,8 @@ router.get('/:ideaId', function(req, res) {
 	    }
 	    res.render('comments', {
 		idea: idea,
+		isOwner: idea.owner_id == userId,
+		isLoggedIn: userId != undefined,
 		screenshotIds: screenshotIds,
 		user_vote: vote
 	    });
@@ -199,10 +219,28 @@ router.get('/:ideaId', function(req, res) {
 var HandlePostScreen = function(req, res, next) {
     var ideaId = req.params.ideaId;
     var image;
-    // Don't allow too many images.
-    sql.SimpleQueryPromise('SELECT count(*) AS count FROM idea_images '
-			   + 'WHERE idea = ?', [ideaId])
+
+    // Make sure the user owns this idea.
+    if (!res.locals.user) {
+	throw new Error('Must be logged in to add a screenshot.');
+    }
+    var userId = res.locals.user.id;
+    sql.SimpleQueryPromise('SELECT owner_id FROM ideas WHERE id = ?',
+			   [ideaId])
 	.then(function(rows) {
+	    if (rows.length != 1 || rows[0].owner_id != userId) {
+		res.status(403);
+		res.render('error', {
+		    message: 'Only the idea owner can add screenshots.',
+		    error: {}
+		});
+		return;
+	    }
+	    // Don't allow too many images.
+	    return sql.SimpleQueryPromise('SELECT count(*) AS count '
+					  + 'FROM idea_images '
+					  + 'WHERE idea = ?', [ideaId]);
+	}).then(function(rows) {
  	    if (rows[0].count >= 8) {
 		throw Error('Too many screenshots.');
 	    }
@@ -222,9 +260,9 @@ var HandlePostScreen = function(req, res, next) {
 					  [imageId, ideaId, image]);
 	}).then(function() {
 	    res.redirect('/idea/' + ideaId);
-	}, function(err) {
+	}).catch(function(err) {
 	    console.log('HandlePostScreen error:', err);
-	    next(err);
+	    res.send('');
 	});
 }
 
@@ -293,13 +331,44 @@ router.get('/:ideaId/screenthumbs/:screenId.jpg', function(req, res, next) {
 router.post('/:ideaId/vote', function(req, res, next) {
     var ideaId = req.params.ideaId;
     var vote = req.body.vote;
-    sql.SimpleQueryPromise(
-	'INSERT INTO user_votes (user, idea, amount) VALUES (?, ?, ?) '
-	+ 'ON DUPLICATE KEY UPDATE user=VALUES(user), idea=VALUES(idea), '
-            + 'amount=VALUES(amount)', ['10203924794701033', ideaId, vote])
-	.then(function() {
-	    res.redirect('/idea/' + ideaId);
-	}).catch(function(err) { if (err) throw err; });
+    if (Array.isArray(req.body.vote)) {
+	// The form returns all buttons and inputs named 'vote', and we have
+	// to decide which one to choose.  The immediate action buttons come
+	// after the DollarVotes entry, so find which values are filled in
+	// and choose the last one.
+	var filledVotes = req.body.vote.filter(
+	    function(val) {return val != '';});
+	vote = filledVotes[filledVotes.length - 1];
+    }
+
+    if (!res.locals.user) {
+	throw new Error('Must be logged in to vote.');
+    }
+
+    if (vote == 0) {
+	// Remove the vote.
+	sql.SimpleQueryPromise(
+	    'DELETE FROM user_votes WHERE user=? AND idea=?',
+	    [res.locals.user.id, ideaId])
+	    .then(function() {
+		res.redirect('/idea/' + ideaId);
+	    }).catch(function(err) {
+		console.log(err);
+	    });
+    } else {
+	data = [res.locals.user.id, ideaId, vote];
+	console.log('Data is:', data);
+	sql.SimpleQueryPromise(
+	    'INSERT INTO user_votes (user, idea, amount) VALUES (?, ?, ?) '
+		+ 'ON DUPLICATE KEY UPDATE '
+		+ 'user=VALUES(user), idea=VALUES(idea), '
+		+ 'amount=VALUES(amount)', data)
+	    .then(function() {
+		res.redirect('/idea/' + ideaId);
+	    }).catch(function(err) {
+		console.log(err);
+	    });
+    }
 });
 
 

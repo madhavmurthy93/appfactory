@@ -4,10 +4,23 @@ block voting
   form(action='/idea/' + idea.id + '/vote' method='post')
     if (user_vote != undefined)
       div
-        | Your current vote: #{user_vote}
+        if (user_vote == -1)
+          | You voted: I don't think this will succeed
+        else if (user_vote == -2)
+          | You voted: Too difficult to implement
+        else if (user_vote == -3)
+          | You voted: I don't support this for some other reason
+        else
+          | You voted $#{user_vote}
     div
       label(for='vote') DollarVote: 
-      input(type='number' min='0' max='10' step='1'
-            name='vote' placeholder='0')
+      input(type='number' min='1' max='10' step='1'
+            name='vote' placeholder='1')
+      if (user_vote != undefined)
+        div
+          button(name='vote' type='submit' value='0') Remove Vote
+      button(name='vote' type='submit' value='-1') I don't think this will succeed
+      button(name='vote' type='submit' value='-2') Too difficult to implement
+      button(name='vote' type='submit' value='-3') I don't support this for some other reason
     div
       input(type='submit')
