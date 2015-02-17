@@ -7,10 +7,11 @@ var bodyParser = require('body-parser');
 var session = require('express-session');
 var passport = require('passport');
 
-var index = require('./routes/index');
 var about = require('./routes/about');
 var auth = require('./routes/auth');
 var idea = require('./routes/idea');
+var index = require('./routes/index');
+var profile = require('./routes/profile');
 var testdb = require('./routes/testdb');
 
 var app = express();
@@ -44,6 +45,7 @@ app.use('/', index);
 app.use('/about', about);
 app.use('/auth', auth);
 app.use('/idea', idea);
+app.use('/profile', profile);
 app.use('/testdb', testdb);
 
 // catch 404 and forward to error handler
