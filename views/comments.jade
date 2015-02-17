@@ -8,6 +8,8 @@ block comments
 				div.row
 					each comment in comments
 						div.caption
+							h4.bold
+								| Posted by: #{comment.username} at #{comment.date} (#{comment.votes} votes)
 							p.light 
 								| #{comment.contents}
 			p
