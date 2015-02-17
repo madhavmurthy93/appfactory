@@ -166,7 +166,9 @@ router.get('/:ideaId', function(req, res) {
     var ideaId = req.params.ideaId;
     var idea;
     var screenshotIds;
+    var isDeveloper = false;
     var userId=-1;
+    var vote = undefined;
     if (res.locals.user) {
 	userId = res.locals.user.id;
     }
@@ -198,16 +200,25 @@ router.get('/:ideaId', function(req, res) {
 		'SELECT amount FROM user_votes WHERE idea=? AND user=?',
 		[ideaId, userId]);
 	}).then(function(rows) {
-	    var vote = undefined;
 	    if (rows.length == 1) {
 		vote = rows[0].amount;
+	    }
+
+	    return sql.SimpleQueryPromise(
+		'SELECT is_developer FROM users WHERE id=?', [userId || -1]);
+	}).then(function(usersRows) {
+	    console.log('userId:', userId);
+	    console.log('UsersRows:', usersRows);
+	    if (usersRows.length == 1) {
+		isDeveloper = usersRows[0].is_developer;
 	    }
 	    res.render('comments', {
 		idea: idea,
 		isOwner: idea.owner_id == userId,
 		isLoggedIn: userId != undefined,
 		screenshotIds: screenshotIds,
-		user_vote: vote
+		user: {id: userId, isDeveloper: isDeveloper},
+		userVote: vote
 	    });
 	}).catch(function(err) {
 	    console.log(err);

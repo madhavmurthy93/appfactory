@@ -2,21 +2,21 @@ extends ideaDetail
 
 block voting
   form(action='/idea/' + idea.id + '/vote' method='post')
-    if (user_vote != undefined)
+    if (userVote != undefined)
       div
-        if (user_vote == -1)
+        if (userVote == -1)
           | You voted: I don't think this will succeed
-        else if (user_vote == -2)
+        else if (userVote == -2)
           | You voted: Too difficult to implement
-        else if (user_vote == -3)
+        else if (userVote == -3)
           | You voted: I don't support this for some other reason
         else
-          | You voted $#{user_vote}
+          | You voted $#{userVote}
     div
       label(for='vote') DollarVote: 
       input(type='number' min='1' max='10' step='1'
             name='vote' placeholder='1')
-      if (user_vote != undefined)
+      if (userVote != undefined)
         div
           button(name='vote' type='submit' value='0') Remove Vote
       button(name='vote' type='submit' value='-1') I don't think this will succeed
