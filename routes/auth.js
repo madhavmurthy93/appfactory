@@ -21,7 +21,7 @@ passport.deserializeUser(function(user, done) {
 passport.use(new FacebookStrategy({
 	clientID: process.env.FB_CLIENTID,
 	clientSecret: process.env.FB_CLIENT_SECRET,
-	callbackURL: 'https://uw-app-factory.herokuapp.com/auth/facebook/callback'
+	callbackURL: process.env.FB_CALLBACK_URL
 	},
 	function(accessToken, refreshToken, profile, done) {
 	    sql.SimpleQueryPromise('SELECT * FROM users WHERE id = ?',
@@ -46,9 +46,9 @@ passport.use(new FacebookStrategy({
 
 router.get('/facebook', passport.authenticate('facebook'));
 
-router.get('/facebook/callback',
-	   passport.authenticate('facebook',
-				 {successRedirect: '/',
-				  failureRedirect: '/about'}));
+router.get('/facebook/callback', 
+		  passport.authenticate('facebook',
+								{successRedirect: '/',
+								failureRedirect: '/about'}));
 
 module.exports = router;
