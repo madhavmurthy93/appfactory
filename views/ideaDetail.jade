@@ -1,26 +1,35 @@
 extends layout
 
 block content
-  p
-    | Idea ID: #{idea.id}<br>
-    | Idea Name: #{idea.name}
-  p
-    img(src="/idea/thumbs/" + idea.id)
-  if screenshotIds.length > 0
-    div Screenshots
-      each imageId in screenshotIds
-        a(href="/idea/" + idea.id + "/screens/" + imageId + ".jpg")
-          img(src="/idea/" + idea.id + "/screenthumbs/" + imageId + ".jpg")
-  p
-    | Summary: #{idea.summary}<br>
-    | Description: #{idea.description}
-  div
-    form(action="/idea/" + idea.id + "/screens",
-         method="post", enctype="multipart/form-data")
-      p
-        label(for="screenshot") Add a screenshot
-        input(type="file", name="screenshot", accept="image/*")
-      p
-        input(type="submit")
+  div.container.short
+    div.jumbotron
+      h1 #{idea.name}
+      h3 Screenshots
+      div.row
+        div.col-sm-6.col-md-4
+          div.thumbnail
+            img(src="/idea/thumbs/" + idea.id)
+        if (screenshotIds.length > 0)
+          - var n = 1
+          each imageId in screenshotIds
+            if (n % 3 == 0)
+              div.row
+            div.col-sm-6.col-md-4
+              div.thumbnail
+                a(href="/idea/" + idea.id + "/screens/" + imageId + ".jpg")
+                  img(src="/idea/" + idea.id + "/screenthumbs/" + imageId + ".jpg")
+            - n++
+      form.form-horizontal(action='/idea/' + idea.id + '/screens' method='post' enctype='multipart/form-data')
+        div.form-group
+          div.col-sm-10
+            input(type='file' name='screenshot' accept='image/*' required)
+        div.form-group
+          div.col-sm-10
+            button.btn.btn-primary(type='submit') Add screenshot
+      h3 Summary
+      p #{idea.summary}
+      h3 Description
+      p #{idea.description}
+
   block voting
   block comments
