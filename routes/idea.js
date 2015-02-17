@@ -207,8 +207,6 @@ router.get('/:ideaId', function(req, res) {
 	    return sql.SimpleQueryPromise(
 		'SELECT is_developer FROM users WHERE id=?', [userId || -1]);
 	}).then(function(usersRows) {
-	    console.log('userId:', userId);
-	    console.log('UsersRows:', usersRows);
 	    if (usersRows.length == 1) {
 		isDeveloper = usersRows[0].is_developer;
 	    }
