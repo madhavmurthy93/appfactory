@@ -166,7 +166,12 @@ router.get('/:ideaId', function(req, res) {
     var ideaId = req.params.ideaId;
     var idea;
     var screenshotIds;
-    sql.SimpleQueryPromise('SELECT id, name, summary, description '
+    var userId;
+    if (res.locals.user) {
+	userId = res.locals.user.id;
+    }
+
+    sql.SimpleQueryPromise('SELECT id, name, summary, description, owner_id '
 			   + 'FROM ideas WHERE id=?', [ideaId])
 	.then(function(rows) {
 	    if (rows.length == 0) {
@@ -197,8 +202,10 @@ router.get('/:ideaId', function(req, res) {
 	    if (rows.length == 1) {
 		vote = rows[0].amount;
 	    }
-	    res.render('voting', {
+	    res.render('comments', {
 		idea: idea,
+		isOwner: idea.owner_id == userId,
+		isLoggedIn: userId != undefined,
 		screenshotIds: screenshotIds,
 		user_vote: vote
 	    });
