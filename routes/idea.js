@@ -345,30 +345,25 @@ router.post('/:ideaId/vote', function(req, res, next) {
 	throw new Error('Must be logged in to vote.');
     }
 
+    var query;
     if (vote == 0) {
 	// Remove the vote.
-	sql.SimpleQueryPromise(
+	query = sql.SimpleQueryPromise(
 	    'DELETE FROM user_votes WHERE user=? AND idea=?',
-	    [res.locals.user.id, ideaId])
-	    .then(function() {
-		res.redirect('/idea/' + ideaId);
-	    }).catch(function(err) {
-		console.log(err);
-	    });
+	    [res.locals.user.id, ideaId]);
     } else {
 	data = [res.locals.user.id, ideaId, vote];
-	console.log('Data is:', data);
-	sql.SimpleQueryPromise(
+	query = sql.SimpleQueryPromise(
 	    'INSERT INTO user_votes (user, idea, amount) VALUES (?, ?, ?) '
 		+ 'ON DUPLICATE KEY UPDATE '
 		+ 'user=VALUES(user), idea=VALUES(idea), '
-		+ 'amount=VALUES(amount)', data)
-	    .then(function() {
-		res.redirect('/idea/' + ideaId);
-	    }).catch(function(err) {
-		console.log(err);
-	    });
+		+ 'amount=VALUES(amount)', data);
     }
+    query.then(function() {
+	res.redirect('/idea/' + ideaId);
+    }).catch(function(err) {
+	console.log(err);
+    });
 });
 
 
