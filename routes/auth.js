@@ -39,6 +39,8 @@ passport.use(new FacebookStrategy({
 				console.log(err);
 			    });
 		    }
+		}).catch(function(err) {
+		    console.log(err);
 		});
 	}
 ));
