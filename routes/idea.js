@@ -67,13 +67,14 @@ var GetImage = function(req, propertyName, size) {
 };
 
 
-var InsertIntoDb = function(req, ideaId, image) {
-    return sql.SimpleQueryPromise(
-	'INSERT INTO ideas '
-	    + '(id, name, summary, thumbnail, description) '
-	    + 'VALUES (?,?,?,?,?)',
-	[ideaId, req.body.name.trim(), req.body.summary.trim(),
-	 image, req.body.description.trim()]);
+var InsertIntoDb = function(req, ideaId, image, ownerId) {
+    data = {id: ideaId,
+	    name: req.body.name.trim(),
+	    summary: req.body.summary.trim(),
+	    thumbnail: image,
+	    description: req.body.description.trim(),
+	    owner_id: ownerId}
+    return sql.SimpleQueryPromise('INSERT INTO ideas SET ?', data);
 };
 
 
@@ -115,17 +116,29 @@ router.post('/',
 			    files: 1},
 		    inMemory: true}),
 	    function(req, res, next) {
+		var ownerId;
+		var ideaId;
+		var image;
+		
+		if (res.locals.user) {
+		    ownerId = res.locals.user.id;
+		} else {
+		    throw new Error('Must be logged in to add an idea.');
+		}
+
 		ValidateIdeaInput(req);
 		GetNextAvailableIdeaId('ideas')
-		    .then(function(ideaId) {
-			GetImage(req, 'displayImage', THUMBNAIL_SIZE)
-			    .then(function(image) {
-				console.log('Set ideaId to', ideaId);
-				InsertIntoDb(req, ideaId, image)
-				    .then(function() {
-					res.redirect('/idea/' + ideaId);
-				    });
-			    });
+		    .then(function(ideaIdIn) {
+			ideaId = ideaIdIn;
+			console.log('Set ideaId to', ideaId);
+			return GetImage(req, 'displayImage', THUMBNAIL_SIZE);
+		    }).then(function(imageIn) {
+			image = imageIn;
+			return InsertIntoDb(req, ideaId, image, ownerId);
+		    }).then(function() {
+			res.redirect('/idea/' + ideaId);
+		    }).catch(function(err) {
+			console.log('Create idea error:', err);
 		    });
 	    });
 
