@@ -1,4 +1,20 @@
 extends voting
 
 block comments
-  p Hi
+	div.container
+		div.jumbotron
+			h3 Comments
+			p.bold 
+				| Comment 1
+			p 
+				| Comment 2			
+			p
+				| 
+			form.form-horizontal(action='/about' method='post')
+				div.form-group
+					label(for='comment' class='col-sm-2 control-label') Add Comment
+					div.col-sm-10
+						textarea.form-control(rows='4' placeholder='Comment' name='comment')
+				div.form-group
+					div.col-sm-offset-2.col-sm-10
+						button.btn.btn-primary(type='submit') Submit

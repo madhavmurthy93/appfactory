@@ -184,7 +184,7 @@ router.get('/:ideaId', function(req, res) {
 	    if (rows.length == 1) {
 		vote = rows[0].amount;
 	    }
-	    res.render('voting', {
+	    res.render('comments', {
 		idea: idea,
 		screenshotIds: screenshotIds,
 		user_vote: vote
