@@ -167,7 +167,9 @@ router.get('/:ideaId', function(req, res) {
     var idea;
     var comments;
     var screenshotIds;
+    var isDeveloper = false;
     var userId=-1;
+    var vote = undefined;
     if (res.locals.user) {
 	userId = res.locals.user.id;
     }
@@ -205,9 +207,15 @@ router.get('/:ideaId', function(req, res) {
 		'SELECT amount FROM user_votes WHERE idea=? AND user=?',
 		[ideaId, userId]);
 	}).then(function(rows) {
-	    var vote = undefined;
 	    if (rows.length == 1) {
 		vote = rows[0].amount;
+	    }
+
+	    return sql.SimpleQueryPromise(
+		'SELECT is_developer FROM users WHERE id=?', [userId || -1]);
+	}).then(function(usersRows) {
+	    if (usersRows.length == 1) {
+		isDeveloper = usersRows[0].is_developer;
 	    }
 	    res.render('comments', {
 		idea: idea,
@@ -215,7 +223,8 @@ router.get('/:ideaId', function(req, res) {
 		isOwner: idea.owner_id == userId,
 		isLoggedIn: userId != undefined,
 		screenshotIds: screenshotIds,
-		user_vote: vote
+		user: {id: userId, isDeveloper: isDeveloper},
+		userVote: vote
 	    });
 	}).catch(function(err) {
 	    console.log(err);
@@ -353,30 +362,25 @@ router.post('/:ideaId/vote', function(req, res, next) {
 	throw new Error('Must be logged in to vote.');
     }
 
+    var query;
     if (vote == 0) {
 	// Remove the vote.
-	sql.SimpleQueryPromise(
+	query = sql.SimpleQueryPromise(
 	    'DELETE FROM user_votes WHERE user=? AND idea=?',
-	    [res.locals.user.id, ideaId])
-	    .then(function() {
-		res.redirect('/idea/' + ideaId);
-	    }).catch(function(err) {
-		console.log(err);
-	    });
+	    [res.locals.user.id, ideaId]);
     } else {
 	data = [res.locals.user.id, ideaId, vote];
-	console.log('Data is:', data);
-	sql.SimpleQueryPromise(
+	query = sql.SimpleQueryPromise(
 	    'INSERT INTO user_votes (user, idea, amount) VALUES (?, ?, ?) '
 		+ 'ON DUPLICATE KEY UPDATE '
 		+ 'user=VALUES(user), idea=VALUES(idea), '
-		+ 'amount=VALUES(amount)', data)
-	    .then(function() {
-		res.redirect('/idea/' + ideaId);
-	    }).catch(function(err) {
-		console.log(err);
-	    });
+		+ 'amount=VALUES(amount)', data);
     }
+    query.then(function() {
+	res.redirect('/idea/' + ideaId);
+    }).catch(function(err) {
+	console.log(err);
+    });
 });
 
 
