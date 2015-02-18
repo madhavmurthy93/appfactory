@@ -16,6 +16,11 @@ var testdb = require('./routes/testdb');
 
 var app = express();
 
+// app.locals is accessible to all rendered templates.  We'll set
+// devenv so all our templates know whether we're running in a dev environment
+// or the production one.
+app.locals.devenv = (app.get('env') === 'development');
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
