@@ -26,7 +26,7 @@ router.get('/', function(req, res) {
 
 // Find an unused ID from the given table and return it.  This returns
 // a promise that will provide the next available ID.
-var GetNextAvailableIdeaId = function(table) {
+var GetNextAvailableId = function(table) {
     return sql.SimpleQueryPromise(
 	'SELECT id FROM ' + table + ' ORDER BY id DESC LIMIT 1')
 	.then(function(rows) {
@@ -39,7 +39,6 @@ var GetNextAvailableIdeaId = function(table) {
 	    })
 	});
 }
-
 
 var GetImage = function(req, propertyName, size) {
     return new Promise(function(resolve, reject) {
@@ -127,7 +126,7 @@ router.post('/',
 		}
 
 		ValidateIdeaInput(req);
-		GetNextAvailableIdeaId('ideas')
+		GetNextAvailableId('ideas')
 		    .then(function(ideaIdIn) {
 			ideaId = ideaIdIn;
 			console.log('Set ideaId to', ideaId);
@@ -191,7 +190,7 @@ router.get('/:ideaId', function(req, res) {
 	    // Check for comments associated with this idea.
 	    return sql.SimpleQueryPromise('SELECT comment.votes, user.name as username, comment.contents, DATE_FORMAT(comment.created_at, GET_FORMAT(TIMESTAMP, \'USA\')) as date '
 	    			  + 'FROM comments comment, users user '
-					  + 'WHERE idea = ?', [ideaId]);
+					  + 'WHERE idea = ? AND comment.user = user.id', [ideaId]);
 	}).then(function(rows) {
 	    comments = rows;
 
@@ -269,7 +268,7 @@ var HandlePostScreen = function(req, res, next) {
 	    image = gotImage;
 
 	    // Find the next available ID.
-	    return GetNextAvailableIdeaId('idea_images');
+	    return GetNextAvailableId('idea_images');
 	}).then(function(imageId) {
 	    // Add the screenshot to the database.
 	    return sql.SimpleQueryPromise('INSERT INTO idea_images '
@@ -342,6 +341,28 @@ router.get('/:ideaId/screenthumbs/:screenId.jpg', function(req, res, next) {
 		})
 
 	});
+});
+
+// Comment on an idea
+router.post('/:ideaId/comment', function(req, res, next) {
+    var ideaId = req.params.ideaId;
+    var comment = req.body.comment;
+    
+    if (!HasNonWhitespaceContent(comment)) {
+    	throw new Error('Comment cannot be blank.');
+        }
+    
+    if (!res.locals.user) {
+    	throw new Error('Must be logged in to comment.');
+        }
+    
+    sql.SimpleQueryPromise('INSERT INTO comments (user, idea, contents) VALUES (?, ?, ?)',
+    		[res.locals.user.id, ideaId, comment])
+	.then(function() {
+    	    res.redirect('/idea/' + ideaId);
+	}).catch(function(err) {
+    	    console.log(err);
+    	});
 });
 
 

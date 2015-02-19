@@ -1,7 +1,11 @@
 extends layout
 
 block content
-  p ID: #{user.id}
+  script(src='/javascripts/profile.js').
   p Name: #{user.name}
   p Description: #{user.description}
-  p Is Developer: #{is_developer}
+  input(type='checkbox' id='isDeveloper' name='isDeveloper'
+        onClick='isDeveloperClicked(this)' value=user.is_developer)
+  label(for='isDeveloper') I am a Developer
+  script(). setDeveloperChecked(user.is_developer)
+  
