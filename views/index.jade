@@ -1,18 +1,28 @@
 extends layout
-
+block header
+	link(rel='stylesheet', href='/stylesheets/index.css')
 block content
 	div.container
-		- var n = 0
-		each idea in ideas
-			if (n % 3 == 0)
-				div.row
-			a(href="/idea/" + idea.id)
-				div.col-sm-6.col-md-4
-					div.thumbnail
-						img(src='/idea/thumbs/' + idea.id, alt='idea_image')
-						div.caption
-							h3.bold #{idea.name}
-							p.light 
-								| #{idea.summary}
-			- n++
+		div.row
+			div.col-md-3
+				p.lead Categories
+					div.list-group
+						a.list-group-item(href='#') Travel and Navigation
+						a.list-group-item(href='#') Ecommerce
+						a.list-group-item(href='#') Internet of Things
+
+			div.col-md-9
+				- var n = 0
+				each idea in ideas
+					if (n % 3 == 0)
+						div.row
+					a(href="/idea/" + idea.id)
+						div.col-sm-4.col-md-4.col-lg-4
+							div.thumbnail
+								img(src='/idea/thumbs/' + idea.id, alt='idea_image')
+								div.caption
+									h4.bold #{idea.name}
+									p.light 
+										| #{idea.summary}
+					- n++
 					

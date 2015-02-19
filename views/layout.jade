@@ -4,10 +4,13 @@ html
 		title AppFactory
 		link(rel='stylesheet', href='/bootstrap/css/bootstrap.min.css')
 		link(rel='stylesheet', href='/stylesheets/style.css')
+		link(href='http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css' rel='stylesheet' type='text/css')
+		link(href='http://fonts.googleapis.com/css?family=Open+Sans:300,400italic,700italic,400,700' rel='stylesheet' type='text/css')
+	block header
 	body
 		script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js').
 		script(src='/bootstrap/js/bootstrap.min.js').
-		nav.navbar.navbar-default.navbar-static-top
+		nav.navbar.navbar-inverse.navbar-fixed-top(role='navigation')
 			div.container
 				div.navbar-header
 					button.navbar-toggle.collapsed(type='button' data-toggle='collapse' data-target='#bs-example-navbar-collapse-1')
@@ -28,6 +31,7 @@ html
 							if locals.user
 								a(href='/profile') #{user.name}
 							else
-								a(href='/auth/facebook' id='image')
-									img(src='/images/facebook.png' alt='facebook')
+								a(href='/auth/facebook')
+									i.fa.fa-facebook-official
+									|  Login 
 	block content

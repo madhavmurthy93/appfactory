@@ -1,0 +1,12 @@
+.caption {
+	height: 130px;
+	overflow: hidden;
+}
+
+.thumbnail img {
+	width: 100%;
+}
+
+.thumbnail {
+    padding: 0;
+}

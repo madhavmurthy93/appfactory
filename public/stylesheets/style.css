@@ -1,11 +1,8 @@
 body {
+  padding-top: 70px;
   padding-bottom: 20px;
   font-size: 12pt;
-  font-family: sans-serif;
-}
-
-a {
-  color: #00B7FF;
+  font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .jumbotron p {
@@ -18,10 +15,6 @@ a {
 
 .short {
 	width: 970px;
-}
-
-#image {
-	padding: 5px;
 }
 
 #padding-adjust {
