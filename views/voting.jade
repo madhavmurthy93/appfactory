@@ -1,37 +1,54 @@
 extends ideaDetail
 
 block voting
-  if (userVote != undefined)
-      div
-        p 
-          span.bold You voted  
-          if (userVote == -1)
-            | I don't think this will succeed
-          else if (userVote == -2)
-            | Too difficult to implement
-          else if (userVote == -3)
-            | I don't support this for some other reason
-          else
-            | $#{userVote}
-  div
-    select#defaultVote.form-control(name='vote')
-      option(value='-1') I don't think this will succeed
-      option(value='-2') Too difficult to implement
-      option(value='-3') I don't support this for another reason
-      if (userVote != undefined)
-        option(value='0' selected) Remove vote
-  br
-  p.center
-    | OR
-  form(action='/idea/' + idea.id + '/vote' method='post')
-    div.form-group
-      label(for='vote') Dollar Vote
-      div.input-group
-        span.input-group-addon $
-        input.form-control#dollarVote(type='number' min='-3' max='10' step='1'
-          name='vote' placeholder='0')
-        span.input-group-addon .00
+  div.panel.panel-default
+    div.panel-heading 
+      p(style="margin-top: .5em") Total DollarVotes: $#{totalDollarVotes}
+    if (rejectionVotes)
+      div.panel-body
+        p Votes for:
+        ul(style="padding-left: .75em")
+          if (rejectionVotes[-1])
+            li I don't think this will succeed: #{rejectionVotes[-1]}
+          if (rejectionVotes[-2])
+            li Too difficult to implement: #{rejectionVotes[-2]}
+          if (rejectionVotes[-3])
+            li I don't support this for some other reason: #{rejectionVotes[-3]}
 
-    div.form-group
-      button.btn.btn-primary(type='submit') Submit
+  if (!isLoggedIn)
+    p.lead <a href="/auth/facebook">Log in</a> to vote
+  else
+    p.lead Cast your vote:
+    if (userVote != undefined)
+        div
+          p 
+            span.bold You voted  
+            if (userVote == -1)
+              | I don't think this will succeed
+            else if (userVote == -2)
+              | Too difficult to implement
+            else if (userVote == -3)
+              | I don't support this for some other reason
+            else
+              | $#{userVote}
+    div
+      select#defaultVote.form-control(name='vote')
+        option(value='-1') I don't think this will succeed
+        option(value='-2') Too difficult to implement
+        option(value='-3') I don't support this for another reason
+        if (userVote != undefined)
+          option(value='0' selected) Remove vote
+    br
+    p.center
+      | OR
+    form(action='/idea/' + idea.id + '/vote' method='post')
+      div.form-group
+        label(for='vote') Dollar Vote
+        div.input-group
+          span.input-group-addon $
+          input.form-control#dollarVote(type='number' min='-3' max='10' step='1'
+            name='vote' placeholder='0')
+          span.input-group-addon .00
 
+      div.form-group
+        button.btn.btn-primary(type='submit') Submit
