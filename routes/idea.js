@@ -223,7 +223,7 @@ router.get('/:ideaId', function(req, res) {
 		isOwner: idea.owner_id == userId,
 		isLoggedIn: userId != undefined,
 		screenshotIds: screenshotIds,
-		user: {id: userId, isDeveloper: isDeveloper},
+		userInfo: {id: userId, isDeveloper: isDeveloper},
 		userVote: vote
 	    });
 	}).catch(function(err) {
