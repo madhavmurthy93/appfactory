@@ -2,6 +2,12 @@ extends layout
 block header
   link(rel='stylesheet', href='/stylesheets/ideaDetail.css')
 
+block editPicture
+  if (isOwner)
+    div
+      button.btn-default(type="button" name="removeImage"
+                         onClick="removeImage(#{idea.id}, #{n})") Remove
+
 block content
   script(src='/javascripts/ideaDetail.js').
   div.container
@@ -15,19 +21,21 @@ block content
           div.panel-body
             h4.bold Screenshots
             div.row
+              - var n = 0
               div.col-sm-4.col-md-4.col-lg-4
                 div.thumbnail
                   img(src="/idea/thumbs/" + idea.id)
+                  block editPicture
               if (screenshotIds.length > 0)
-                - var n = 1
                 each imageId in screenshotIds
+                  - n++
                   if (n % 3 == 0)
                     div.row
                   div.col-sm-4.col-md-4.col-lg-4
                     div.thumbnail
                       a(href="/idea/" + idea.id + "/screens/" + imageId + ".jpg")
                         img(src="/idea/" + idea.id + "/screenthumbs/" + imageId + ".jpg")
-                  - n++
+                      block editPicture
             form.form-horizontal(action='/idea/' + idea.id + '/screens' method='post' enctype='multipart/form-data')
               div.form-group
                 div.col-sm-10

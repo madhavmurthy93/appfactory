@@ -196,9 +196,10 @@ router.get('/:ideaId', function(req, res) {
 	}).then(function(rows) {
 	    comments = rows;
 
-		    // Check for any screenshots associated with this idea.
-		    return sql.SimpleQueryPromise('SELECT id FROM idea_images '
-						  + 'WHERE idea = ?', [ideaId]);
+	    // Check for any screenshots associated with this idea.
+	    return sql.SimpleQueryPromise(
+		'SELECT id FROM idea_images WHERE idea = ? '
+		    + 'ORDER BY id', [ideaId]);
 	}).then(function(screenshotRows) {
 	    // Convert SQL rows to an array of just the ID values.
 	    screenshotIds = screenshotRows.map(function(item) {
@@ -262,55 +263,98 @@ router.get('/:ideaId', function(req, res) {
 });
 
 
+var VerifyOwnerPromise = function(user, ideaId, res) {
+    return new Promise(function(resolve, reject) {
+	if (!user) {
+	    console.log('User is not logged in.');
+	    res.status(403);
+	    res.render('error', {
+		message: 'Must be logged in.',
+		error: {}
+	    });
+	    reject('Must be logged in.');
+	}
+	var userId = res.locals.user.id;
+
+	sql.SimpleQueryPromise('SELECT owner_id FROM ideas WHERE id = ?',
+			       [ideaId])
+	    .then(function(rows) {
+		if (rows.length != 1 || rows[0].owner_id != userId) {
+		    res.status(403);
+		    res.render('error', {
+			message: 'Must be the owner of this idea.',
+			error: {}
+		    });
+		    reject('Must be the owner of this idea.');
+		}
+		resolve(userId);
+	    });
+    });
+};
+
+
 var HandlePostScreen = function(req, res, next) {
     var ideaId = req.params.ideaId;
     var image;
+    var userId;
 
     // Make sure the user owns this idea.
-    if (!res.locals.user) {
-	throw new Error('Must be logged in to add a screenshot.');
-    }
-    var userId = res.locals.user.id;
-    sql.SimpleQueryPromise('SELECT owner_id FROM ideas WHERE id = ?',
-			   [ideaId])
-	.then(function(rows) {
-	    if (rows.length != 1 || rows[0].owner_id != userId) {
-		res.status(403);
-		res.render('error', {
-		    message: 'Only the idea owner can add screenshots.',
-		    error: {}
-		});
-		return;
-	    }
-	    // Don't allow too many images.
-	    return sql.SimpleQueryPromise('SELECT count(*) AS count '
-					  + 'FROM idea_images '
-					  + 'WHERE idea = ?', [ideaId]);
-	}).then(function(rows) {
- 	    if (rows[0].count >= 8) {
-		throw Error('Too many screenshots.');
-	    }
+    VerifyOwnerPromise(res.locals.user, ideaId, res).then(function(userIdIn) {
+	userId = userIdIn;
 
+	// If this idea doesn't have a thumbnail, store this image as the
+	// thumbnail.
+	return sql.SimpleQueryPromise(
+	    'SELECT thumbnail FROM ideas WHERE id=?', [ideaId])
+    }).then(function(rows) {
+	if (rows.length != 1) {
+	    throw new Error("Can't find current idea.");
+	}
+	if (rows[0].thumbnail == null || rows[0].thumbnail.length == 0) {
+	    // Set the thumbnail instead of adding a screenshot.
 	    // Get and process the image in the request.
-	    return GetImage(req, 'screenshot', SCREENSHOT_SIZE);
-	}).then(function(gotImage) {
-	    image = gotImage;
+	    GetImage(req, 'screenshot', SCREENSHOT_SIZE)
+		.then(function(gotImage) {
+		    image = gotImage;
+		    return sql.SimpleQueryPromise(
+			'UPDATE ideas SET thumbnail=? WHERE id=?',
+			[image, ideaId]).then(function() {
+			    res.redirect('/idea/' + ideaId);
+			});
+		});
+	} else {
+	    // Don't allow too many images.
+	    sql.SimpleQueryPromise(
+		'SELECT count(*) AS count '
+		    + 'FROM idea_images '
+		    + 'WHERE idea = ?', [ideaId])
+		.then(function(rows) {
+ 		    if (rows[0].count >= 8) {
+			throw Error('Too many screenshots.');
+		    }
 
-	    // Find the next available ID.
-	    return GetNextAvailableId('idea_images');
-	}).then(function(imageId) {
-	    // Add the screenshot to the database.
-	    return sql.SimpleQueryPromise('INSERT INTO idea_images '
-					  + '(id, idea, image) '
-					  + 'VALUES (?,?,?)',
-					  [imageId, ideaId, image]);
-	}).then(function() {
-	    res.redirect('/idea/' + ideaId);
-	}).catch(function(err) {
-	    console.log('HandlePostScreen error:', err);
-	    res.send('');
-	});
-}
+		    // Get and process the image in the request.
+		    return GetImage(req, 'screenshot', SCREENSHOT_SIZE);
+		}).then(function(gotImage) {
+		    image = gotImage;
+
+		    // Find the next available ID.
+		    return GetNextAvailableId('idea_images');
+		}).then(function(imageId) {
+		    // Add the screenshot to the database.
+		    return sql.SimpleQueryPromise('INSERT INTO idea_images '
+						  + '(id, idea, image) '
+						  + 'VALUES (?,?,?)',
+						  [imageId, ideaId, image]);
+		}).then(function() {
+		    res.redirect('/idea/' + ideaId);
+		}).catch(function(err) {
+		    console.log('HandlePostScreen error:', err);
+		    res.send('');
+		});
+	}
+    });
+};
 
 
 // Add a screenshot to an idea.
@@ -351,6 +395,66 @@ router.get('/:ideaId/screens/:screenId.jpg', function(req, res, next) {
 	.then(function(image) {
 	    res.writeHead(200, {'Content-Type': 'image/jpg'});
 	    res.end(image, 'binary');
+	});
+});
+
+
+// Delete one of the images.
+router.delete('/:ideaId/screens/:screenIndex', function(req, res, next) {
+    var ideaId = req.params.ideaId;
+
+    // Make sure the user owns this idea.
+    VerifyOwnerPromise(res.locals.user, ideaId, res)
+	.then(function(userId) {
+	    // Subtract 1 from the screen index, because index 0 indicates the
+	    // thumbnail.  After subtracting, remaining screens will then start
+	    // at index 0.
+	    var screenIndex = req.params.screenIndex - 1;
+
+	    if (screenIndex < -1) {
+		throw new Error('Invalid screen index.');
+	    } else if (screenIndex == -1) {
+		// Delete the thumbnail.
+		sql.SimpleQueryPromise(
+		    'UPDATE ideas SET thumbnail="" WHERE id=?',
+		    [ideaId])
+		    .then(function() {
+			// Success.  Send an empty HTTP 200 response.
+			res.send('');
+		    }).catch(function(err) {
+			console.log('Error deleting thumbnail:', err);
+			res.status(500);
+			res.render('error', {
+			    message: 'Error deleting thumbnail.',
+			    error: {}
+			});
+		    });
+	    } else {
+		// Delete one of the screenshots.  First, map from screen index
+		// to screen ID.
+		sql.SimpleQueryPromise(
+		    'SELECT id FROM idea_images WHERE idea = ? ORDER BY id',
+		    [ideaId])
+		    .then(function(rows) {
+			if (rows.length > screenIndex) {
+			    var screenId = rows[screenIndex].id;
+			    return sql.SimpleQueryPromise(
+				'DELETE FROM idea_images WHERE idea=? AND id=?',
+				[ideaId, rows[screenIndex].id]);
+			}
+			throw new Error('Invalid screen index.');
+		    }).then(function() {
+			// Success.  Send an empty HTTP 200 response.
+			res.send('');
+		    }).catch(function(err) {
+			console.log('Error deleting image:', err);
+			res.status(500);
+			res.render('error', {
+			    message: 'Error deleting image.',
+			    error: {}
+			});
+		    });
+	    }
 	});
 });
 
