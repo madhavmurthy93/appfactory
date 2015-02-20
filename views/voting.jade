@@ -1,26 +1,37 @@
 extends ideaDetail
 
 block voting
-  form(action='/idea/' + idea.id + '/vote' method='post')
-    if (userVote != undefined)
+  if (userVote != undefined)
       div
-        if (userVote == -1)
-          | You voted: I don't think this will succeed
-        else if (userVote == -2)
-          | You voted: Too difficult to implement
-        else if (userVote == -3)
-          | You voted: I don't support this for some other reason
-        else
-          | You voted $#{userVote}
-    div
-      label(for='vote') DollarVote: 
-      input(type='number' min='1' max='10' step='1'
-            name='vote' placeholder='1')
+        p 
+          span.bold You voted  
+          if (userVote == -1)
+            | I don't think this will succeed
+          else if (userVote == -2)
+            | Too difficult to implement
+          else if (userVote == -3)
+            | I don't support this for some other reason
+          else
+            | $#{userVote}
+  div
+    select#defaultVote.form-control(name='vote')
+      option(value='-1') I don't think this will succeed
+      option(value='-2') Too difficult to implement
+      option(value='-3') I don't support this for another reason
       if (userVote != undefined)
-        div
-          button(name='vote' type='submit' value='0') Remove Vote
-      button(name='vote' type='submit' value='-1') I don't think this will succeed
-      button(name='vote' type='submit' value='-2') Too difficult to implement
-      button(name='vote' type='submit' value='-3') I don't support this for some other reason
-    div
-      input(type='submit')
+        option(value='0' selected) Remove vote
+  br
+  p.center
+    | OR
+  form(action='/idea/' + idea.id + '/vote' method='post')
+    div.form-group
+      label(for='vote') Dollar Vote
+      div.input-group
+        span.input-group-addon $
+        input.form-control#dollarVote(type='number' min='-3' max='10' step='1'
+          name='vote' placeholder='0')
+        span.input-group-addon .00
+
+    div.form-group
+      button.btn.btn-primary(type='submit') Submit
+

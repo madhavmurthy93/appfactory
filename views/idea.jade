@@ -2,23 +2,24 @@ extends layout
 
 block content
   script(src='/javascripts/idea.js').
-  form.form-horizontal#padding-adjust(action='/idea' method='post' enctype='multipart/form-data')
-    div.form-group
-      label(for='name' class='col-sm-2 control-label') Title
-      div.col-sm-10
-        input.form-control(type='text' name='name' placeholder='Title' required)
-    div.form-group(data-toggle='tooltip' data-placement='top' title='This description will appear when browsing ideas from AppFactory home page.')
-      label(for='summary' class='col-sm-2 control-label') Summary
-      div.col-sm-10
-        textarea.form-control(rows='2' name='summary' placeholder='Summary' required)
-    div.form-group(data-toggle='tooltip' data-placement='top' title="This description goes on your idea's details page.")
-      label(for='description' class='col-sm-2 control-label') Description
-      div.col-sm-10
-        textarea.form-control(rows='4' name='description' placeholder='Description' required)
-    div.form-group
-      label(for='displayImage' class='col-sm-2 control-label') Thumbnail
-      div.col-sm-10
-        input(type='file' name='displayImage' accept='image/*' required) 
-    div.form-group
-      div.col-sm-offset-2.col-sm-10
-        button.btn.btn-primary(type='submit') Submit
+  div.col-md-8.col-md-offset-2
+    form.form-horizontal(action='/idea' method='post' enctype='multipart/form-data')
+      div.form-group
+        label(for='name' class='col-sm-2 control-label') Title
+        div.col-sm-10
+          input.form-control(type='text' name='name' placeholder='Title' required)
+      div.form-group(data-toggle='tooltip' data-placement='top' title='This description will appear when browsing ideas from AppFactory home page.')
+        label(for='summary' class='col-sm-2 control-label') Summary
+        div.col-sm-10
+          textarea.form-control(rows='2' name='summary' placeholder='Summary' required)
+      div.form-group(data-toggle='tooltip' data-placement='top' title="This description goes on your idea's details page.")
+        label(for='description' class='col-sm-2 control-label') Description
+        div.col-sm-10
+          textarea.form-control(rows='4' name='description' placeholder='Description' required)
+      div.form-group
+        label(for='displayImage' class='col-sm-2 control-label') Thumbnail
+        div.col-sm-10
+          input(type='file' name='displayImage' accept='image/*' required) 
+      div.form-group
+        div.col-sm-offset-2.col-sm-10
+          button.btn.btn-primary(type='submit') Submit

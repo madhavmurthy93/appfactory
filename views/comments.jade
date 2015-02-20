@@ -1,24 +1,20 @@
 extends ideaDeveloper
 
 block comments
-	div.container
-		div.jumbotron
-			h3 Comments
-			div.container
-				div.row
-					each comment in comments
-						div.caption
-							h4.bold
-								| Posted by: #{comment.username} at #{comment.date} (#{comment.votes} votes)
-							p.light 
-								| #{comment.contents}
-			p
-				| 
-			form.form-horizontal(action='/idea/' + idea.id + '/comment' method='post')
-				div.form-group
-					label(for='comment' class='col-sm-2 control-label') Add Comment
-					div.col-sm-10
-						textarea.form-control(rows='4' placeholder='Comment' name='comment')
-				div.form-group
-					div.col-sm-offset-2.col-sm-10
-						button.btn.btn-primary(type='submit') Submit
+	div.well
+		form.form-horizontal(action='/idea/' + idea.id + '/comment' method='post')
+			div.form-group
+				div.col-sm-8
+					textarea.form-control(rows='4' placeholder='Comment' name='comment')
+			div.form-group
+					div.col-sm-8
+						button.btn.btn-primary(type='submit') Leave a comment
+
+		each comment in comments
+			hr
+			div.row
+				div.col-md-12
+					span #{comment.username} #{comment.date}
+					span.pull-right Votes 
+						span.badge #{comment.votes}
+					p #{comment.contents}

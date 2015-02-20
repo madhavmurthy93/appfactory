@@ -1,8 +1,10 @@
 extends layout
+block header
+	link(rel='stylesheet', href='/stylesheets/about.css')
 
 block content
-	div.container.short
-		div.jumbotron
+	div.container
+		div.col-md-8.col-md-offset-2.justify
 			h1 Our Vision
 			p.bold 
 				| AppFactory is a platform to match idea creators with developers and designers 

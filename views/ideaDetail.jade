@@ -1,36 +1,43 @@
 extends layout
+block header
+  link(rel='stylesheet', href='/stylesheets/ideaDetail.css')
 
 block content
-  div.container.short
-    div.jumbotron
-      h1 #{idea.name}
-      h3 Screenshots
-      div.row
-        div.col-sm-6.col-md-4
-          div.thumbnail
-            img(src="/idea/thumbs/" + idea.id)
-        if (screenshotIds.length > 0)
-          - var n = 1
-          each imageId in screenshotIds
-            if (n % 3 == 0)
-              div.row
-            div.col-sm-6.col-md-4
-              div.thumbnail
-                a(href="/idea/" + idea.id + "/screens/" + imageId + ".jpg")
-                  img(src="/idea/" + idea.id + "/screenthumbs/" + imageId + ".jpg")
-            - n++
-      form.form-horizontal(action='/idea/' + idea.id + '/screens' method='post' enctype='multipart/form-data')
-        div.form-group
-          div.col-sm-10
-            input(type='file' name='screenshot' accept='image/*' required)
-        div.form-group
-          div.col-sm-10
-            button.btn.btn-primary(type='submit') Add screenshot
-      h3 Summary
-      p #{idea.summary}
-      h3 Description
-      p #{idea.description}
-
-  block voting
-  block ideaDeveloper
-  block comments
+  script(src='/javascripts/ideaDetail.js').
+  div.container
+    div.row
+      div.col-md-3
+        p.lead Voting
+          block voting
+      div.col-md-9
+        div.panel.panel-default
+          div.panel-heading 
+            h1.panel-title #{idea.name}
+          div.panel-body
+            h4.bold Screenshots
+            div.row
+              div.col-sm-4.col-md-4.col-lg-4
+                div.thumbnail
+                  img(src="/idea/thumbs/" + idea.id)
+              if (screenshotIds.length > 0)
+                - var n = 1
+                each imageId in screenshotIds
+                  if (n % 3 == 0)
+                    div.row
+                  div.col-sm-4.col-md-4.col-lg-4
+                    div.thumbnail
+                      a(href="/idea/" + idea.id + "/screens/" + imageId + ".jpg")
+                        img(src="/idea/" + idea.id + "/screenthumbs/" + imageId + ".jpg")
+                  - n++
+            form.form-horizontal(action='/idea/' + idea.id + '/screens' method='post' enctype='multipart/form-data')
+              div.form-group
+                div.col-sm-10
+                  input(type='file' name='screenshot' accept='image/*' required)
+              div.form-group
+                div.col-sm-10
+                  button.btn.btn-primary(type='submit') Add screenshot
+            h4.bold Summary
+            p #{idea.summary}
+            h4.bold Description
+            p #{idea.description}
+        block comments

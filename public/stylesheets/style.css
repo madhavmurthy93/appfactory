@@ -1,22 +1,9 @@
 body {
   padding-top: 70px;
   padding-bottom: 20px;
-  font-size: 12pt;
   font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-}
-
-.jumbotron p {
-	font-size: 12pt;
 }
 
 .bold {
 	font-weight: bold;
-}
-
-.short {
-	width: 970px;
-}
-
-#padding-adjust {
-	padding-right:200px;
 }
