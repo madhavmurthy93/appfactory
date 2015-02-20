@@ -4,8 +4,8 @@ block header
 
 block editPicture
   if (isOwner)
-    div
-      button.btn-default(type="button" name="removeImage"
+    div.caption
+      button.btn.btn-default(type="button" name="removeImage"
                          onClick="removeImage(#{idea.id}, #{n})") Remove
 
 block content
@@ -36,13 +36,14 @@ block content
                       a(href="/idea/" + idea.id + "/screens/" + imageId + ".jpg")
                         img(src="/idea/" + idea.id + "/screenthumbs/" + imageId + ".jpg")
                       block editPicture
-            form.form-horizontal(action='/idea/' + idea.id + '/screens' method='post' enctype='multipart/form-data')
-              div.form-group
-                div.col-sm-10
-                  input(type='file' name='screenshot' accept='image/*' required)
-              div.form-group
-                div.col-sm-10
-                  button.btn.btn-primary(type='submit') Add screenshot
+            if (isOwner)
+              form.form-horizontal(action='/idea/' + idea.id + '/screens' method='post' enctype='multipart/form-data')
+                div.form-group
+                  div.col-sm-10
+                    input(type='file' name='screenshot' accept='image/*' required)
+                div.form-group
+                  div.col-sm-10
+                    button.btn.btn-primary(type='submit') Add screenshot
             h4.bold Summary
             p #{idea.summary}
             h4.bold Description
