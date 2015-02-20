@@ -7,8 +7,7 @@ block content
   div.container
     div.row
       div.col-md-3
-        p.lead Voting
-          block voting
+        block voting
       div.col-md-9
         div.panel.panel-default
           div.panel-heading 
@@ -40,4 +39,5 @@ block content
             p #{idea.summary}
             h4.bold Description
             p #{idea.description}
+        block ideaDeveloper
         block comments

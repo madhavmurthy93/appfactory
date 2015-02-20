@@ -169,6 +169,8 @@ router.get('/:ideaId', function(req, res) {
     var isDeveloper = false;
     var userId=-1;
     var vote = undefined;
+    var totalDollarVotes = 0;
+    var rejectionVotes;
     if (res.locals.user) {
 	userId = res.locals.user.id;
     }
@@ -211,6 +213,31 @@ router.get('/:ideaId', function(req, res) {
 		vote = rows[0].amount;
 	    }
 
+	    // Count the sum of DollarVotes.
+	    return sql.SimpleQueryPromise(
+		'SELECT SUM(amount) AS total FROM user_votes WHERE idea=? '
+		+ 'AND amount >= 1', [ideaId]);
+	}).then(function(rows) {
+	    if (rows.length == 1 && rows[0].total) {
+		totalDollarVotes = rows[0].total;
+	    }
+
+	    // Count sums for each of the rejection categories.
+	    return sql.SimpleQueryPromise(
+		'SELECT amount, count(*) AS votes FROM user_votes '
+		    + 'WHERE amount < 0 AND idea=? GROUP BY amount', [ideaId]);
+	}).then(function(rows) {
+	    // Process each of the rows and turn the result into a
+	    // more convenient map that the UI can use.  Map from
+	    // vote type (the negative value of the vote) to vote count.
+	    if (rows.length > 0) {
+		rejectionVotes = {}
+		for (i = 0; i < rows.length; i++) {
+		    rejectionVotes[rows[i].amount] = rows[i].votes;
+		}
+	    }
+
+	    // Check if the current user is a developer.
 	    return sql.SimpleQueryPromise(
 		'SELECT is_developer FROM users WHERE id=?', [userId || -1]);
 	}).then(function(usersRows) {
@@ -221,10 +248,12 @@ router.get('/:ideaId', function(req, res) {
 		idea: idea,
 		comments: comments,
 		isOwner: idea.owner_id == userId,
-		isLoggedIn: userId != undefined,
+		isLoggedIn: userId != -1,
+		rejectionVotes: rejectionVotes,
 		screenshotIds: screenshotIds,
 		user: {id: userId, isDeveloper: isDeveloper},
-		userVote: vote
+		userVote: vote,
+		totalDollarVotes: totalDollarVotes
 	    });
 	}).catch(function(err) {
 	    console.log(err);
