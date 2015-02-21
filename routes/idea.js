@@ -69,7 +69,6 @@ var GetImage = function(req, propertyName, size) {
 var InsertIntoDb = function(req, ideaId, image, ownerId) {
     data = {id: ideaId,
 	    name: req.body.name.trim(),
-	    summary: req.body.summary.trim(),
 	    thumbnail: image,
 	    description: req.body.description.trim(),
 	    owner_id: ownerId}
@@ -94,11 +93,6 @@ var ValidateIdeaInput = function(req) {
     }
 
     // TODO: Check if the name already exists.
-
-    // Make sure the user supplied a summary.
-    if (!HasNonWhitespaceContent(req.body.summary)) {
-	throw new Error('Brief description not provided.');
-    }
 
     // Make sure the user supplied a description.
     if (!HasNonWhitespaceContent(req.body.description)) {
@@ -175,7 +169,7 @@ router.get('/:ideaId', function(req, res) {
 	userId = res.locals.user.id;
     }
 
-    sql.SimpleQueryPromise('SELECT id, name, summary, description, owner_id '
+    sql.SimpleQueryPromise('SELECT id, name, description, owner_id '
 			   + 'FROM ideas WHERE id=?', [ideaId])
 	.then(function(rows) {
 	    if (rows.length == 0) {
