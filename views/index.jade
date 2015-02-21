@@ -7,9 +7,8 @@ block content
 			div.col-md-3
 				p.lead Categories
 					div.list-group
-						a.list-group-item(href='#') Travel and Navigation
-						a.list-group-item(href='#') Ecommerce
-						a.list-group-item(href='#') Internet of Things
+						each category in categories
+							a.list-group-item(href='#')= category
 
 			div.col-md-9
 				- var n = 0
