@@ -18,37 +18,37 @@ block voting
   if (!isLoggedIn)
     p.lead <a href="/auth/facebook">Log in</a> to vote
   else
-    p.lead Cast your vote:
     if (userVote != undefined)
-        div
-          p 
-            span.bold You voted  
-            if (userVote == -1)
-              | I don't think this will succeed
-            else if (userVote == -2)
-              | Too difficult to implement
-            else if (userVote == -3)
-              | I don't support this for some other reason
-            else
-              | $#{userVote}
-    div
-      select#defaultVote.form-control(name='vote')
-        option(value='-1') I don't think this will succeed
-        option(value='-2') Too difficult to implement
-        option(value='-3') I don't support this for another reason
-        if (userVote != undefined)
-          option(value='0' selected) Remove vote
-    br
-    p.center
-      | OR
-    form(action='/idea/' + idea.id + '/vote' method='post')
-      div.form-group
-        label(for='vote') Dollar Vote
-        div.input-group
-          span.input-group-addon $
-          input.form-control#dollarVote(type='number' min='-3' max='10' step='1'
-            name='vote' placeholder='0')
-          span.input-group-addon .00
+      div
+        p 
+          span.bold You voted  
+          if (userVote == -1)
+            | I don't think this will succeed
+          else if (userVote == -2)
+            | Too difficult to implement
+          else if (userVote == -3)
+            | I don't support this for some other reason
+          else
+            | $#{userVote}
 
-      div.form-group
-        button.btn.btn-primary(type='submit') Submit
+      form(action='/idea/' + idea.id + '/vote' method='post')
+        div.form-group
+          button.btn.btn-primary(type='submit' name='vote'
+                                 value='0') Remove Vote
+
+      p.lead Change your vote:
+    else
+      p.lead Cast your vote:
+    div
+      form(action='/idea/' + idea.id + '/vote' method='post')
+        select#defaultVote.form-control(name='vote')
+          option(value='10') $10 - I love it!
+          option(value='8') $8 - It's great!
+          option(value='5') $5 - I really like it!
+          option(value='2') $2 - I like it!
+          option(value='-1') I don't think this will succeed
+          option(value='-2') Too difficult to implement
+          option(value='-3') I don't support this for another reason
+
+        div.form-group
+          button.btn.btn-primary(type='submit') Submit
