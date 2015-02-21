@@ -8,6 +8,14 @@ block content
         label(for='name' class='col-sm-2 control-label') Title
         div.col-sm-10
           input.form-control(type='text' name='name' placeholder='Title' required)
+
+      div.form-group
+        label(for='category' class='col-sm-2 control-label') Category
+        div.col-sm-10
+          select#defaultVote.form-control(name='category' value=categories[0])
+            each category in categories
+              option(value=category)= category
+
       div.form-group(data-toggle='tooltip' data-placement='top' title="This description goes on your idea's details page, and the first portion of it will appear on the idea browsing page.")
         label(for='description' class='col-sm-2 control-label') Description
         div.col-sm-10

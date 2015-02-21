@@ -20,7 +20,18 @@ var SCREENSHOT_SIZE = {
 
 // Create an idea page. This is where users enter info for a new idea.
 router.get('/', function(req, res) {
-    res.render('idea');
+    sql.SimpleQueryPromise(
+	'SELECT category FROM categories ORDER BY category ASC')
+	.then(function(rows) {
+	    var categories = rows.map(function(row) { return row.category; });
+	    res.render('idea', { categories: categories });
+	}).catch(function(err) {
+	    res.status(500);
+	    res.render('error', {
+		message: 'Failure retrieving categories.',
+		error: {}
+	    });
+	});
 });
 
 
@@ -71,6 +82,7 @@ var InsertIntoDb = function(req, ideaId, image, ownerId) {
 	    name: req.body.name.trim(),
 	    thumbnail: image,
 	    description: req.body.description.trim(),
+	    category: req.body.category,
 	    owner_id: ownerId}
     return sql.SimpleQueryPromise('INSERT INTO ideas SET ?', data);
 };
@@ -169,7 +181,7 @@ router.get('/:ideaId', function(req, res) {
 	userId = res.locals.user.id;
     }
 
-    sql.SimpleQueryPromise('SELECT id, name, description, owner_id '
+    sql.SimpleQueryPromise('SELECT id, name, description, category, owner_id '
 			   + 'FROM ideas WHERE id=?', [ideaId])
 	.then(function(rows) {
 	    if (rows.length == 0) {

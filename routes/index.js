@@ -15,7 +15,6 @@ router.get('/', function(req, res, next) {
 		'SELECT category FROM categories ORDER BY category ASC');
 	}).then(function(rows) {
 	    var categories = rows.map(function(row) { return row.category; });
-	    console.log('Categories:', categories);
 	    res.render('index',
 		       { ideas: ideas,
 			 categories: categories });
