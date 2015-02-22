@@ -181,8 +181,9 @@ router.get('/:ideaId', function(req, res) {
 	userId = res.locals.user.id;
     }
 
-    sql.SimpleQueryPromise('SELECT id, name, description, category, owner_id '
-			   + 'FROM ideas WHERE id=?', [ideaId])
+    sql.SimpleQueryPromise('SELECT idea.id as id, idea.name as name, idea.description as description, idea.category as category, idea.owner_id as owner_id, user.name as ownername '
+			   + 'FROM ideas idea, users user '
+			   + 'WHERE idea.id=? AND idea.owner_id = user.id', [ideaId])
 	.then(function(rows) {
 	    if (rows.length == 0) {
 		var err = new Error('Idea ' + ideaId + ' not found');
