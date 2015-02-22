@@ -18,12 +18,12 @@ block content
 					a(href="/idea/" + idea.id)
 						div.col-sm-4.col-md-4.col-lg-4
 							div.thumbnail
-								img(src='/idea/thumbs/' + idea.id, alt='idea_image')
+								div.thumbnail-container
+									img.thumbnail-img(src='/idea/thumbs/' + idea.id, alt='idea_image')
 								div.caption
 									h4.bold #{idea.name}
 									h5 By: #{idea.ownername}
 									h4.bold DollarVotes: $20
-									p.light 
-										| #{idea.description}
+									p.light= idea.description
 					- n++
 					

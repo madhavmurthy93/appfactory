@@ -11,15 +11,3 @@ var isDeveloperClicked = function(isDeveloperCheckbox) {
     }
     xmlhttp.send('isDeveloper=' + isDeveloperValue);
 }
-
-var setDeveloperChecked = function(checked) {
-    var isDeveloperCheckbox = document.getElementById('isDeveloper');
-    isDeveloperCheckbox.checked = checked;
-}
-
-window.onload = function() {
-    // Make sure the checkbox is checked if it's supposed to be.
-    var isDeveloperCheckbox = document.getElementById('isDeveloper');
-    console.log('idc:', isDeveloperCheckbox);
-    isDeveloperCheckbox.checked = parseInt(isDeveloperCheckbox.value);
-}
