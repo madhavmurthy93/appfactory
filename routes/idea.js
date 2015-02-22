@@ -190,7 +190,10 @@ router.get('/:ideaId', function(req, res) {
 	userId = res.locals.user.id;
     }
 
-    sql.SimpleQueryPromise('SELECT idea.id as id, idea.name as name, idea.description as description, idea.category as category, idea.owner_id as owner_id, user.name as ownername '
+    sql.SimpleQueryPromise(
+    			 'SELECT idea.id as id, idea.name as name, '
+    		   +   'idea.description as description, idea.category as category, '
+    		   +   'idea.owner_id as owner_id, user.name as ownername, user.profile_pic_url as userPic '
 			   + 'FROM ideas idea, users user '
 			   + 'WHERE idea.id=? AND idea.owner_id = user.id', [ideaId])
 	.then(function(rows) {
