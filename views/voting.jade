@@ -75,3 +75,44 @@ block voting
                     option(value='-3') Some other reason
               div.form-group
                 button.btn.btn-primary(type='submit') Submit
+    
+    div.panel.panel-default
+      div.panel-heading 
+        if (estimatedmo)
+          p Estimated Man Months: #{estimatedmo} months
+        else
+          p No Estimated Man Months
+      if (devVote != undefined)
+        div.panel-body
+          p.bold Your answers:
+          ul(style="padding-left: .75em")
+            li Man Months: #{devVote.devmo}
+            li Available hrs/week: #{devVote.devweekly}
+            li Avaliable weeks: #{devVote.devweeks}
+        - var devVoteHeader = 'Change your answers'
+      else
+        - var devVoteHeader = 'Work on this project?'
+
+    if (userInfo.isDeveloper)
+      div.panel.panel-default
+        div.panel-heading
+          p= devVoteHeader
+        div.panel-body
+          form(action='/idea/' + idea.id + '/devvote' method='post')
+            div.form-group
+              label(for='manmo') Man Months
+              div.input-group
+                input.form-control(type='number' min='1' step='1' name='manmo' placeholder='0' required)
+                span.input-group-addon mo.
+            div.form-group
+              label(for='weekly') Available hrs/week
+              div.input-group
+                input.form-control(type='number' min='1' step='1' name='weekly' placeholder='0' required)
+                span.input-group-addon hrs/week
+            div.form-group
+              label(for='weeks') Available weeks
+              div.input-group
+                input.form-control(type='number' min='1' step='1' name='weeks' placeholder='0' required)
+                span.input-group-addon weeks
+            div.form-group
+                button.btn.btn-primary(type='submit') Submit
