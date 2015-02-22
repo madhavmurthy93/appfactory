@@ -22,10 +22,9 @@ passport.use(new FacebookStrategy({
 	clientID: process.env.FB_CLIENTID,
 	clientSecret: process.env.FB_CLIENT_SECRET,
 	callbackURL: process.env.FB_CALLBACK_URL,
-	profileFields: ['id', 'about', 'displayName', 'picture.type(large)']
+	profileFields: ['id', 'about', 'displayName', 'picture.type(normal)']
 	},
 	function(accessToken, refreshToken, profile, done) {
-		console.log(profile);
 	    sql.SimpleQueryPromise('SELECT * FROM users WHERE id = ?',
 				   [profile._json.id])
 		.then(function(rows) {
