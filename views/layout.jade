@@ -35,7 +35,9 @@ html
 					ul.nav.navbar-nav.navbar-right
 						li
 							if locals.user
-								a(href='/profile') #{user.name}
+								a(href='/profile') 
+									img#profilepic(src='#{user.profile_pic_url}' alt='profile pic') 
+									|   #{user.name}
 							else
 								a(href='/auth/facebook')
 									i.fa.fa-facebook-official
