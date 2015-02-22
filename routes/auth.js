@@ -21,9 +21,11 @@ passport.deserializeUser(function(user, done) {
 passport.use(new FacebookStrategy({
 	clientID: process.env.FB_CLIENTID,
 	clientSecret: process.env.FB_CLIENT_SECRET,
-	callbackURL: process.env.FB_CALLBACK_URL
+	callbackURL: process.env.FB_CALLBACK_URL,
+	profileFields: ['id', 'about', 'displayName', 'picture.type(large)']
 	},
 	function(accessToken, refreshToken, profile, done) {
+		console.log(profile);
 	    sql.SimpleQueryPromise('SELECT * FROM users WHERE id = ?',
 				   [profile._json.id])
 		.then(function(rows) {
@@ -31,7 +33,7 @@ passport.use(new FacebookStrategy({
 	    		done(null, rows[0]);
 	    	    } else {
 	    		var user = {id: profile._json.id,
-				    name: profile._json.name, description: ''};
+				    name: profile._json.name, description: '', profile_pic_url: profile.photos[0].value};
 			sql.SimpleQueryPromise('INSERT INTO users SET ?', user)
 			    .then(function() {
 				done(null, user);
