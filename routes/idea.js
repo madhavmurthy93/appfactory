@@ -20,6 +20,12 @@ var SCREENSHOT_SIZE = {
 
 // Create an idea page. This is where users enter info for a new idea.
 router.get('/', function(req, res) {
+    if (!res.locals.user) {
+	// The user isn't logged in.  Redirect to the login page.
+	res.redirect('/auth/facebook');
+	return;
+    }
+
     sql.SimpleQueryPromise(
 	'SELECT category FROM categories ORDER BY category ASC')
 	.then(function(rows) {
@@ -128,7 +134,8 @@ router.post('/',
 		if (res.locals.user) {
 		    ownerId = res.locals.user.id;
 		} else {
-		    throw new Error('Must be logged in to add an idea.');
+		    res.redirect('/auth/facebook');
+		    return;
 		}
 
 		ValidateIdeaInput(req);
