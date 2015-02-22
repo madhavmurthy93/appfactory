@@ -7,9 +7,8 @@ block content
 			div.col-md-3
 				p.lead Categories
 					div.list-group
-						a.list-group-item(href='#') Travel and Navigation
-						a.list-group-item(href='#') Ecommerce
-						a.list-group-item(href='#') Internet of Things
+						each category in categories
+							a.list-group-item(href='#')= category
 
 			div.col-md-9
 				- var n = 0
@@ -22,7 +21,9 @@ block content
 								img(src='/idea/thumbs/' + idea.id, alt='idea_image')
 								div.caption
 									h4.bold #{idea.name}
+									h5 By: #{idea.ownername}
+									h4.bold DollarVotes: $20
 									p.light 
-										| #{idea.summary}
+										| #{idea.description}
 					- n++
 					

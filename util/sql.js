@@ -31,8 +31,10 @@ var SimpleQueryPromise = function(query, params) {
     return new Promise(function(resolve, reject) {
 	var connection = OpenConnection();
 	
+	// print the query for debugging purposes
 	// console.log('Running query: ', query);
 	// console.log('query params: ', params);
+	
 	connection.query(query, params, function(err, rows) {
 	    connection.end();
 	    if (err) throw err;

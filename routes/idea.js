@@ -20,7 +20,18 @@ var SCREENSHOT_SIZE = {
 
 // Create an idea page. This is where users enter info for a new idea.
 router.get('/', function(req, res) {
-    res.render('idea');
+    sql.SimpleQueryPromise(
+	'SELECT category FROM categories ORDER BY category ASC')
+	.then(function(rows) {
+	    var categories = rows.map(function(row) { return row.category; });
+	    res.render('idea', { categories: categories });
+	}).catch(function(err) {
+	    res.status(500);
+	    res.render('error', {
+		message: 'Failure retrieving categories.',
+		error: {}
+	    });
+	});
 });
 
 
@@ -69,9 +80,9 @@ var GetImage = function(req, propertyName, size) {
 var InsertIntoDb = function(req, ideaId, image, ownerId) {
     data = {id: ideaId,
 	    name: req.body.name.trim(),
-	    summary: req.body.summary.trim(),
 	    thumbnail: image,
 	    description: req.body.description.trim(),
+	    category: req.body.category,
 	    owner_id: ownerId}
     return sql.SimpleQueryPromise('INSERT INTO ideas SET ?', data);
 };
@@ -94,11 +105,6 @@ var ValidateIdeaInput = function(req) {
     }
 
     // TODO: Check if the name already exists.
-
-    // Make sure the user supplied a summary.
-    if (!HasNonWhitespaceContent(req.body.summary)) {
-	throw new Error('Brief description not provided.');
-    }
 
     // Make sure the user supplied a description.
     if (!HasNonWhitespaceContent(req.body.description)) {
@@ -175,8 +181,9 @@ router.get('/:ideaId', function(req, res) {
 	userId = res.locals.user.id;
     }
 
-    sql.SimpleQueryPromise('SELECT id, name, summary, description, owner_id '
-			   + 'FROM ideas WHERE id=?', [ideaId])
+    sql.SimpleQueryPromise('SELECT idea.id as id, idea.name as name, idea.description as description, idea.category as category, idea.owner_id as owner_id, user.name as ownername '
+			   + 'FROM ideas idea, users user '
+			   + 'WHERE idea.id=? AND idea.owner_id = user.id', [ideaId])
 	.then(function(rows) {
 	    if (rows.length == 0) {
 		var err = new Error('Idea ' + ideaId + ' not found');
@@ -190,9 +197,12 @@ router.get('/:ideaId', function(req, res) {
 	    idea = rows[0];
 
 	    // Check for comments associated with this idea.
-	    return sql.SimpleQueryPromise('SELECT comment.votes, user.name as username, comment.contents, DATE_FORMAT(comment.created_at, GET_FORMAT(TIMESTAMP, \'USA\')) as date '
+	    return sql.SimpleQueryPromise(
+	    				'SELECT comment.votes, user.name as username, comment.contents, ' 
+	    			  +   'DATE_FORMAT(comment.created_at, GET_FORMAT(TIMESTAMP, \'USA\')) as date '
 	    			  + 'FROM comments comment, users user '
-					  + 'WHERE idea = ? AND comment.user = user.id', [ideaId]);
+					  + 'WHERE idea = ? AND comment.user = user.id '
+					  + 'ORDER BY created_at DESC', [ideaId]);
 	}).then(function(rows) {
 	    comments = rows;
 

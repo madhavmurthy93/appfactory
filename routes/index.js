@@ -5,20 +5,45 @@ var sql = require('../util/sql');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-    sql.SimpleQueryPromise('SELECT id, name, summary, owner_id FROM ideas')
-	.then(function(rows) {
-	    console.log('Results:', rows);
+    var ideas;
 
-	    data = { 
-		mysql_connected: 'Yes',
-		ideas: rows
-	    };
-	    console.log('Rendering...');
-	    res.render('index', data);
-	    console.log('Done.');
+    sql.SimpleQueryPromise(
+    		  'SELECT idea.id as id, idea.name as name, ' 
+    		+   'idea.description as description, idea.category as category, '
+    		+   'idea.owner_id as owner_id, user.name as ownername '
+    		+ 'FROM ideas idea, users user '
+    		+ 'WHERE idea.owner_id = user.id')
+	.then(function(rows) {
+	    ideas = rows;
+
+	    return sql.SimpleQueryPromise(
+		'SELECT category FROM categories ORDER BY category ASC');
+	}).then(function(rows) {
+	    var categories = rows.map(function(row) { return row.category; });
+	    res.render('index',
+		       { ideas: ideas,
+			 categories: categories });
 	}).catch(function(err) {
 	    console.log(err);
+	    res.send('');
 	});
 });
+
+
+// Fake screenshot pages.
+router.get('/fake:fakeId', function(req, res, next) {
+    var fakeId = parseInt(req.params.fakeId);
+    var fakeIdMap = {
+	0: 'WelcomeToProject.png',
+	1: 'FakeSourceRepository.png',
+	2: 'FakeSourceRepository.png'
+    };
+    var imageName = fakeIdMap[fakeId] || 'FakeSourceRepository.png';
+
+    res.send('<html><body><a href="fake' + (fakeId + 1)
+	     + '"><img src="images/' + imageName + '"></a>'
+	     + '</body></html>');
+});
+
 
 module.exports = router;

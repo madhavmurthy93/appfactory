@@ -19,7 +19,9 @@ block content
           div.panel-heading 
             h1.panel-title #{idea.name}
           div.panel-body
-            h4.bold Screenshots
+            h4.bold Submitted by: #{idea.ownername}
+            h4 <span style="font-weight: bold">Category:</span> #{idea.category]
+            h4.bold Screenshots:
             div.row
               - var n = 0
               div.col-sm-4.col-md-4.col-lg-4
@@ -44,8 +46,6 @@ block content
                 div.form-group
                   div.col-sm-10
                     button.btn.btn-primary(type='submit') Add screenshot
-            h4.bold Summary
-            p #{idea.summary}
             h4.bold Description
             p #{idea.description}
         block ideaDeveloper
