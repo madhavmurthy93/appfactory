@@ -19,8 +19,9 @@ block content
           div.panel-heading 
             h1.panel-title #{idea.name}
           div.panel-body
-            h3 <span style="font-weight: bold">Category:</span> #{idea.category]
-            h4.bold Screenshots
+            h4.bold Submitted by: #{idea.ownername}
+            h4 <span style="font-weight: bold">Category:</span> #{idea.category]
+            h4.bold Screenshots:
             div.row
               - var n = 0
               div.col-sm-4.col-md-4.col-lg-4
