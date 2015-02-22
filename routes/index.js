@@ -12,9 +12,36 @@ router.get('/', function(req, res, next) {
     		+   'idea.description as description, idea.category as category, '
     		+   'idea.owner_id as owner_id, user.name as ownername '
     		+ 'FROM ideas idea, users user '
-    		+ 'WHERE idea.owner_id = user.id')
+    		+ 'WHERE idea.owner_id = user.id '
+    		+ 'ORDER BY id')
 	.then(function(rows) {
 	    ideas = rows;
+	    
+    	return sql.SimpleQueryPromise(
+    			  'SELECT idea idea, SUM(amount) AS total ' 
+    			+ 'FROM user_votes ' 
+    			+ 'WHERE amount >= 1 '
+    			+ 'GROUP BY idea '
+    			+ 'ORDER BY idea');
+	}).then(function(votedIdeas) {
+		var votedIdeaIter = 0;
+		var ideaIter = 0;
+		while (ideaIter < ideas.length && votedIdeaIter < votedIdeas.length) {			
+			if (ideas[ideaIter].id < votedIdeas[votedIdeaIter].idea) {
+				ideas[ideaIter].dollarVotes = 0;
+				++ideaIter;
+				continue;
+			}
+			
+			ideas[ideaIter].dollarVotes = votedIdeas[votedIdeaIter].total;
+			++ideaIter;
+			++votedIdeaIter;
+		}
+		
+		while (ideaIter < ideas.length) {
+			ideas[ideaIter].dollarVotes = 0;
+			++ideaIter;
+		}		
 
 	    return sql.SimpleQueryPromise(
 		'SELECT category FROM categories ORDER BY category ASC');
