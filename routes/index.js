@@ -7,7 +7,12 @@ var sql = require('../util/sql');
 router.get('/', function(req, res, next) {
     var ideas;
 
-    sql.SimpleQueryPromise('SELECT id, name, description, owner_id FROM ideas')
+    sql.SimpleQueryPromise(
+    		  'SELECT idea.id as id, idea.name as name, ' 
+    		+   'idea.description as description, idea.category as category, '
+    		+   'idea.owner_id as owner_id, user.name as ownername '
+    		+ 'FROM ideas idea, users user '
+    		+ 'WHERE idea.owner_id = user.id')
 	.then(function(rows) {
 	    ideas = rows;
 

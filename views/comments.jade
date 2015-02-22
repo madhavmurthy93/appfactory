@@ -2,14 +2,6 @@ extends ideaDeveloper
 
 block comments
 	div.well
-		form.form-horizontal(action='/idea/' + idea.id + '/comment' method='post')
-			div.form-group
-				div.col-sm-8
-					textarea.form-control(rows='4' placeholder='Comment' name='comment')
-			div.form-group
-					div.col-sm-8
-						button.btn.btn-primary(type='submit') Leave a comment
-
 		each comment in comments
 			hr
 			div.row
@@ -18,3 +10,11 @@ block comments
 					span.pull-right Votes 
 						span.badge #{comment.votes}
 					p #{comment.contents}
+					
+		form.form-horizontal(action='/idea/' + idea.id + '/comment' method='post')
+			div.form-group
+				div.col-sm-8
+					textarea.form-control(rows='4' placeholder='Comment' name='comment')
+			div.form-group
+					div.col-sm-8
+						button.btn.btn-primary(type='submit') Leave a comment

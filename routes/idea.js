@@ -197,9 +197,12 @@ router.get('/:ideaId', function(req, res) {
 	    idea = rows[0];
 
 	    // Check for comments associated with this idea.
-	    return sql.SimpleQueryPromise('SELECT comment.votes, user.name as username, comment.contents, DATE_FORMAT(comment.created_at, GET_FORMAT(TIMESTAMP, \'USA\')) as date '
+	    return sql.SimpleQueryPromise(
+	    				'SELECT comment.votes, user.name as username, comment.contents, ' 
+	    			  +   'DATE_FORMAT(comment.created_at, GET_FORMAT(TIMESTAMP, \'USA\')) as date '
 	    			  + 'FROM comments comment, users user '
-					  + 'WHERE idea = ? AND comment.user = user.id', [ideaId]);
+					  + 'WHERE idea = ? AND comment.user = user.id '
+					  + 'ORDER BY created_at DESC', [ideaId]);
 	}).then(function(rows) {
 	    comments = rows;
 
