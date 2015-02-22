@@ -175,6 +175,8 @@ router.get('/:ideaId', function(req, res) {
     var isDeveloper = false;
     var userId=-1;
     var vote = undefined;
+    var devVote = undefined;
+    var estimatedmo = undefined;
     var totalDollarVotes = 0;
     var rejectionVotes;
     if (res.locals.user) {
@@ -247,7 +249,21 @@ router.get('/:ideaId', function(req, res) {
 		    rejectionVotes[rows[i].amount] = rows[i].votes;
 		}
 	    }
+	    return sql.SimpleQueryPromise(
+	    	'SELECT AVG(time_estimate_days) AS totalmo FROM developer_votes WHERE idea=?',
+	    	[ideaId]);
+	}).then(function(rows) {
+		if (rows.length == 1 && rows[0].totalmo) {
+			estimatedmo = rows[0].totalmo;
+		} 
 
+		return sql.SimpleQueryPromise(
+			'SELECT time_estimate_days, available_time_per_week, available_duration_weeks '
+			+ 'FROM developer_votes WHERE idea=? AND user=?', [ideaId, userId]);
+	}).then(function(rows) {
+		if(rows.length == 1) {
+			devVote = {devmo: rows[0].time_estimate_days, devweekly: rows[0].available_time_per_week, devweeks: rows[0].available_duration_weeks};
+		}
 	    // Check if the current user is a developer.
 	    return sql.SimpleQueryPromise(
 		'SELECT is_developer FROM users WHERE id=?', [userId || -1]);
@@ -264,7 +280,9 @@ router.get('/:ideaId', function(req, res) {
 		screenshotIds: screenshotIds,
 		userInfo: {id: userId, isDeveloper: isDeveloper},
 		userVote: vote,
-		totalDollarVotes: totalDollarVotes
+		totalDollarVotes: totalDollarVotes,
+		devVote: devVote,
+		estimatedmo: estimatedmo
 	    });
 	}).catch(function(err) {
 	    console.log(err);
@@ -546,6 +564,31 @@ router.post('/:ideaId/vote', function(req, res, next) {
     }).catch(function(err) {
 	console.log(err);
     });
+});
+
+router.post('/:ideaId/devvote', function(req, res, next) {
+	var ideaId = req.params.ideaId;
+	var manmo = req.body.manmo;
+	var weekly = req.body.weekly;
+	var weeks = req.body.weeks;
+	console.log(ideaId + ' ' + manmo + ' ' + weekly + ' ' + weeks);
+	if (!res.locals.user) {
+		throw new Error('Must be logged in to vote.');
+	}
+	data = [res.locals.user.id, ideaId, manmo, weekly, weeks];
+	sql.SimpleQueryPromise(
+		'INSERT INTO developer_votes (user, idea, time_estimate_days, available_time_per_week, available_duration_weeks) '
+			+ 'VALUES (?, ?, ?, ?, ?) '
+			+ 'ON DUPLICATE KEY UPDATE '
+			+ 'user=VALUES(user), idea=VALUES(idea), '
+			+ 'time_estimate_days=VALUES(time_estimate_days), '
+			+ 'available_time_per_week=VALUES(available_time_per_week), '
+			+ 'available_duration_weeks=VALUES(available_duration_weeks)', data)
+	.then(function() {
+		res.redirect('/idea/' + ideaId);
+	}).catch(function(err) {
+		console.log(err);
+	});
 });
 
 
