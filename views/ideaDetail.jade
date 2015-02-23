@@ -45,7 +45,7 @@ block content
                 div.thumbnail
                   div.thumbnail-container
                     img.thumbnail-img(src="/idea/thumbs/" + idea.id)
-                    +editPicture
+                  +editPicture
               if (screenshotIds.length > 0)
                 each imageId in screenshotIds
                   - n++
@@ -54,9 +54,9 @@ block content
                   div.col-sm-4.col-md-4.col-lg-4
                     div.thumbnail
                       div.thumbnail-container
-                      a(href="/idea/" + idea.id + "/screens/" + imageId + ".jpg")
+                        a(href="/idea/" + idea.id + "/screens/" + imageId + ".jpg")
                           img.thumbnail-img(src="/idea/" + idea.id + "/screenthumbs/" + imageId + ".jpg")
-                          +editPicture
+                      +editPicture
             if (isOwner)
               form.form-horizontal(action='/idea/' + idea.id + '/screens' method='post' enctype='multipart/form-data')
                 div.form-group
