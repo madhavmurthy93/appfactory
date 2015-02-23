@@ -29,7 +29,8 @@ block content
               - var n = 0
               div.col-sm-4.col-md-4.col-lg-4
                 div.thumbnail
-                  img(src="/idea/thumbs/" + idea.id)
+                  div.thumbnail-container
+                    img.thumbnail-img(src="/idea/thumbs/" + idea.id)
                   block editPicture
               if (screenshotIds.length > 0)
                 each imageId in screenshotIds
@@ -38,8 +39,9 @@ block content
                     div.row
                   div.col-sm-4.col-md-4.col-lg-4
                     div.thumbnail
-                      a(href="/idea/" + idea.id + "/screens/" + imageId + ".jpg")
-                        img(src="/idea/" + idea.id + "/screenthumbs/" + imageId + ".jpg")
+                      div.thumbnail-container
+                        a(href="/idea/" + idea.id + "/screens/" + imageId + ".jpg")
+                          img.thumbnail-img(src="/idea/" + idea.id + "/screenthumbs/" + imageId + ".jpg")
                       block editPicture
             if (isOwner)
               form.form-horizontal(action='/idea/' + idea.id + '/screens' method='post' enctype='multipart/form-data')
