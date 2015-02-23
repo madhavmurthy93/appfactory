@@ -281,10 +281,7 @@ router.get('/:ideaId', function(req, res) {
 	}).then(function(rows) {
 		if(rows.length == 1) {
 			devVote = {devmo: rows[0].time_estimate_days, devweekly: rows[0].available_time_per_week, devweeks: rows[0].available_duration_weeks};
-		} else {
-			devVote = {devmo: 0, devweekly: 0, devweeks: 0};
-		}
-
+		} 
 		return sql.SimpleQueryPromise(
 			'SELECT SUM(available_duration_weeks * available_time_per_week) AS commitedmo FROM '
 			+ 'developer_votes WHERE idea=?', [ideaId]);

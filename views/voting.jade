@@ -28,17 +28,16 @@ block voting
         if (userVote != undefined)
           p
             span.bold Your vote
+          ul.list-group
             if (userVote == -1)
-              br
-              span.badge Don't think it will succeed
+              li.list-group-item Don't think it will succeed
             else if (userVote == -2)
-              br
-              span.badge Too difficult to implement
+              li.list-group-item Too difficult to implement
             else if (userVote == -3)
-              br
-              span.badge Dislike it for another reason 
+              li.list-group-item Dislike it for another reason 
             else
-              span.badge.pull-right $ #{userVote}
+              li.list-group-item Dollar votes 
+                span.badge.pull-right $ #{userVote}
            - var voteHeader='Change vote'
           div.btn-group(role='group')
             form(action='/idea/' + idea.id + '/vote' method='post')
@@ -59,12 +58,23 @@ block voting
                 h4.modal-title#modallabel= voteHeader
               div.modal-body
                 div(role="tabpanel")
+                  if (userVote != undefined)
+                    if (userVote > 0)
+                      - var likeclass = 'active'
+                      - var dislikeclass = ''
+                      - var vote = userVote
+                    else
+                      - var likeclass = ''
+                      - var dislikeclass = 'active'
+                  else
+                    - var likeclass = 'active'
+                    - var dislikeclass = ''
                   ul(class="nav nav-tabs" role="tablist")
-                    li(role="presentation" class="active") <a href="#like" aria-controls="like" role="tab" data-toggle="tab">Like</a>
-                    li(role="presentation") <a href="#dislike" aria-controls="dislike" role="tab" data-toggle="tab">Dislike</a>
+                    li(role="presentation" class="#{likeclass}") <a href="#like" aria-controls="like" role="tab" data-toggle="tab">Like</a>
+                    li(role="presentation" class='#{dislikeclass}') <a href="#dislike" aria-controls="dislike" role="tab" data-toggle="tab">Dislike</a>
 
                 div(class="tab-content")
-                  div(role="tabpanel" class="tab-pane active" id="like")
+                  div(role="tabpanel" class="tab-pane #{likeclass}" id="like")
                     form(action='/idea/' + idea.id + '/vote' method='post')
                       div.form-group
                         label(for='vote') Dollar Vote
@@ -73,17 +83,26 @@ block voting
                           span.input-group-addon $
                           input.form-control#dollarVote(
                             type='number' min='1' max='100000' step='1'
-                            name='vote' placeholder='0')
+                            name='vote' placeholder='0' value='#{vote}')
                           span.input-group-addon .00
                       div.form-group
                         button.btn.btn-primary(type='submit') Submit
 
-                  div(role="tabpanel" class="tab-pane" id="dislike")
+                  div(role="tabpanel" class="tab-pane #{dislikeclass}" id="dislike")
                     form(action='/idea/' + idea.id + '/vote' method='post')
                       div.form-group
                         label(for='vote') Why don't you like this idea?
-                          select#defaultVote.form-control(name='vote')
+                        select.form-control#defaultVote(name='vote')
+                          if (userVote == -3)
                             option(value='-1') Won't succeed
+                            option(value='-2') Too difficult to implement
+                            option(value='-3' selected) Some other reason
+                          else if (userVote == -2)
+                            option(value='-1') Won't succeed
+                            option(value='-2' selected) Too difficult to implement
+                            option(value='-3') Some other reason
+                          else
+                            option(value='-1' selected) Won't succeed
                             option(value='-2') Too difficult to implement
                             option(value='-3') Some other reason
                       div.form-group
