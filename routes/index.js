@@ -63,8 +63,13 @@ router.get('/', function(req, res, next) {
 	
 	if (sortBy == 'popular')
 	{
-		console.log('ACTUALLY SORTING');
+		console.log('sorting by popular');
 		ideas.sort(function(a, b) { return a.dollarVotes < b.dollarVotes });
+	}
+	else if (sortBy == 'latest')
+	{
+		console.log('sorting by latest');
+		ideas.sort(function(a, b) { return a.created_at < b.created_at });
 	}
 		
 	// Grab the list of all categories.  Also count how many ideas there

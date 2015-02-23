@@ -29,13 +29,13 @@ block content
 
 			div.col-md-9
 				p.lead Sort By:
-					if (sortBy == 'popular')  
-						a(href='/')
+					if (sortBy == 'popular')
+						a(href='/?sortBy=latest')
 							button(type="button" class="btn btn-default") Latest
 						a(href='/?sortBy=popular')
 							button(type="button" class="btn btn-default active") Popular
 					else
-						a(href='/')
+						a(href='/?sortBy=latest')
 							button(type="button" class="btn btn-default active") Latest
 						a(href='/?sortBy=popular')
 							button(type="button" class="btn btn-default") Popular
