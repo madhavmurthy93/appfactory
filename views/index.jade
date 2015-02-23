@@ -28,7 +28,11 @@ block content
 							+CategoryItem(groupClass, entry)
 
 			div.col-md-9
-				p.lead Sort By: Latest  Popular
+				p.lead Sort By:  
+					a(href='/')
+						button(type="button" class="btn btn-default") Latest
+					a(href='/?sortBy=popular')
+						button(type="button" class="btn btn-default") Popular
 				- var n = 0
 				each idea in ideas
 					if (n % 3 == 0)
