@@ -31,6 +31,16 @@ var submitEditCategory = function(ideaId) {
     xmlhttp.send(params);
 }
 
+var deleteIdea = function(ideaId) {
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open('DELETE', '/idea/' + ideaId, true);
+    xmlhttp.addEventListener('load', function() {
+	// Redirect to the idea browsing page.
+	window.location.href = '/';
+    }, false);
+    xmlhttp.send();
+}
+
 $(document).ready(function() {
 	if (!($('#checkbox-toggle').prop('checked'))) {
 		$('.optional').prop('disabled', true);

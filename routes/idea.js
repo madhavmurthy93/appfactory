@@ -338,6 +338,18 @@ router.put('/:ideaId', function(req, res) {
 });
 
 
+router.delete('/:ideaId', function(req, res) {
+    var ideaId = req.params.ideaId;
+
+    VerifyOwnerPromise(res.locals.user, ideaId, res).then(function(userId) {
+	return sql.SimpleQueryPromise('DELETE FROM ideas WHERE id=?', [ideaId]);
+    }).then(function() {
+	// Success.  Return an empty HTTP 200.
+	res.send('');
+    });
+});
+
+
 var VerifyOwnerPromise = function(user, ideaId, res) {
     return new Promise(function(resolve, reject) {
 	if (!user) {

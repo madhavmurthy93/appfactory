@@ -28,6 +28,21 @@ mixin Category
 
 block content
   script(src='/javascripts/ideaDetail.js').
+
+  div(class="modal fade" id="deleteDialog" tabindex="-1" role="dialog" aria-labelledby="deleteDialogLabel" aria-hidden="true")
+    div(class="modal-dialog")
+      div(class="modal-content")
+        div(class="modal-header")
+          button(type="button" class="close" data-dismiss="modal" aria-label="Close")
+            span(aria-hidden="true") x
+          h4(class="modal-title" id="deleteDialogLabel") Delete Idea
+        div(class="modal-body")
+          | Are you sure you want to delete this idea?  This cannot be undone.
+        div(class="modal-footer")
+          button(type="button" class="btn btn-default" data-dismiss="modal") Cancel
+          button(type="button" class="btn btn-primary"
+                 onClick="deleteIdea(" + idea.id + ")") Delete
+
   div.container
     div.row
       div.col-md-3
@@ -36,6 +51,7 @@ block content
         div.panel.panel-default
           div.panel-heading 
             h1.panel-title #{idea.name}
+              button.btn(type="button" data-toggle="modal" data-target="#deleteDialog" style="margin-left: 2em") Delete this idea
 
           div.panel-body
             h4.bold 
