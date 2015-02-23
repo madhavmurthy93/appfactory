@@ -2,11 +2,29 @@ extends layout
 block header
   link(rel='stylesheet', href='/stylesheets/ideaDetail.css')
 
-block editPicture
+mixin editPicture
   if (isOwner)
     div.caption
       button.btn.btn-default(type="button" name="removeImage"
                          onClick="removeImage(#{idea.id}, #{n})") Remove
+
+mixin Category
+  h4
+    span.bold Category:
+    span#category= idea.category
+      if (isOwner)
+        button.btn(type='button' onClick="toggleEditCategory()") Edit
+    if (isOwner)
+      span#editCategory(style="display: none")
+        select#chosenCategory.form-control(name='editCategory'
+                                           value=idea.category)
+          each category in categories
+            if (category == idea.category)
+              option(value=category selected)= category
+            else
+              option(value=category)= category
+        button.btn.btn-primary(onClick="submitEditCategory(" + idea.id + ")") Submit
+
 
 block content
   script(src='/javascripts/ideaDetail.js').
@@ -18,13 +36,21 @@ block content
         div.panel.panel-default
           div.panel-heading 
             h1.panel-title #{idea.name}
+
+          div.panel-body
+            h4.bold 
+              | Submitted by: 
+              img#profilepic(src='#{idea.userPic}' alt='profile pic')   
+              |   #{idea.ownername}
+            +Category
+            h4.bold Screenshots:
             div.row
-              p
               - var n = 0
               div.col-sm-4.col-md-4.col-lg-4
                 div.thumbnail
-                  img(src="/idea/thumbs/" + idea.id)
-                  block editPicture
+                  div.thumbnail-container
+                    img.thumbnail-img(src="/idea/thumbs/" + idea.id)
+                    +editPicture
               if (screenshotIds.length > 0)
                 each imageId in screenshotIds
                   - n++
@@ -32,9 +58,10 @@ block content
                     div.row
                   div.col-sm-4.col-md-4.col-lg-4
                     div.thumbnail
+                      div.thumbnail-container
                       a(href="/idea/" + idea.id + "/screens/" + imageId + ".jpg")
-                        img(src="/idea/" + idea.id + "/screenthumbs/" + imageId + ".jpg")
-                      block editPicture
+                          img.thumbnail-img(src="/idea/" + idea.id + "/screenthumbs/" + imageId + ".jpg")
+                          +editPicture
             if (isOwner)
               form.form-horizontal(action='/idea/' + idea.id + '/screens' method='post' enctype='multipart/form-data')
                 div.form-group
@@ -43,12 +70,6 @@ block content
                 div.form-group
                   div.col-sm-10
                     button.btn.btn-primary(type='submit') Add screenshot
-          div.panel-body
-            h4.bold 
-              | Submitted by: 
-              img#profilepic(src='#{idea.userPic}' alt='profile pic')
-              |   #{idea.ownername}
-            h4 <span style="font-weight: bold">Category:</span> #{idea.category]
             h4.bold Description
             p #{idea.description}
         block ideaDeveloper
