@@ -7,8 +7,9 @@ block content
 			div.col-md-3
 				p.lead Categories
 					div.list-group
+						a.list-group-item.all-category(href='/') All
 						each category in categories
-							a.list-group-item(href='#')= category
+							a.list-group-item(href='?filter=' + category)= category
 
 			div.col-md-9
 				- var n = 0

@@ -3,6 +3,10 @@
 	overflow: hidden;
 }
 
+.all-category {
+     margin-bottom: 1em;
+}
+
 .thumbnail {
 	padding: 0px;
 }
