@@ -3,75 +3,88 @@ extends ideaDetail
 block voting
   div.panel.panel-default
     div.panel-heading 
-      p(style="margin-top: .5em") Total DollarVotes: $#{totalDollarVotes}
-    if (rejectionVotes)
-      div.panel-body
-        p Votes for:
-        ul(style="padding-left: .75em")
-          if (rejectionVotes[-1])
-            li I don't think this will succeed: #{rejectionVotes[-1]}
-          if (rejectionVotes[-2])
-            li Too difficult to implement: #{rejectionVotes[-2]}
-          if (rejectionVotes[-3])
-            li I don't support this for some other reason: #{rejectionVotes[-3]}
-
-  if (!isLoggedIn)
-    p.lead <a href="/auth/facebook">Log in</a> to vote
-  else
-    if (userVote != undefined)
-      div
+      p(style="margin-top: .5em") DollarVotes (DV)
+    div.panel-body
+      p 
+        span.bold Total DV   
+        span.badge.pull-right   $ #{totalDollarVotes}
+      if (rejectionVotes)
         p 
-          span.bold You voted  
-          if (userVote == -1)
-            | I don't think this will succeed
-          else if (userVote == -2)
-            | Too difficult to implement
-          else if (userVote == -3)
-            | I don't support this for some other reason
-          else
-            | $#{userVote}
+          span.bold Negative votes
+        ul.list-group
+          if (rejectionVotes[-1])
+            li.list-group-item Don't think it will succeed
+              span.badge.pull-right #{rejectionVotes[-1]}
+          if (rejectionVotes[-2])
+            li.list-group-item Too difficult to implement 
+              span.badge.pull-right #{rejectionVotes[-2]}
+          if (rejectionVotes[-3])
+            li.list-group-item Dislike it for another reason 
+              span.badge.pull-right #{rejectionVotes[-3]}
 
-      form(action='/idea/' + idea.id + '/vote' method='post')
-        div.form-group
-          button.btn.btn-primary(type='submit' name='vote'
-                                 value='0') Remove Vote
-
-      - var voteHeader='Change your vote:'
-    else
-      - var voteHeader='Cast your vote:'
-    div.panel.panel-default
-      div.panel-heading
-        p= voteHeader
-      div.panel-body
-        div(role="tabpanel")
-          ul(class="nav nav-tabs" role="tablist")
-            li(role="presentation" class="active") <a href="#like" aria-controls="like" role="tab" data-toggle="tab">Like</a>
-            li(role="presentation") <a href="#dislike" aria-controls="dislike" role="tab" data-toggle="tab">Dislike</a>
-
-        div(class="tab-content")
-          div(role="tabpanel" class="tab-pane active" id="like")
-            form(action='/idea/' + idea.id + '/vote' method='post')
-
-
-              div.form-group
-                label(for='vote') Dollar Vote
-                p How much money would you commit if this idea begins development?
-                div.input-group
-                  span.input-group-addon $
-                  input.form-control#dollarVote(
-                    type='number' min='1' max='100000' step='1'
-                    name='vote' placeholder='0')
-                  span.input-group-addon .00
-              div.form-group
-                button.btn.btn-primary(type='submit') Submit
-
-          div(role="tabpanel" class="tab-pane" id="dislike")
+      if (!isLoggedIn)
+        p.lead <a href="/auth/facebook">Log in</a> to vote
+      else
+        if (userVote != undefined)
+          p
+            span.bold Your vote
+            if (userVote == -1)
+              br
+              span.badge Don't think it will succeed
+            else if (userVote == -2)
+              br
+              span.badge Too difficult to implement
+            else if (userVote == -3)
+              br
+              span.badge Dislike it for another reason 
+            else
+              span.badge.pull-right $ #{userVote}
+           - var voteHeader='Change vote'
+          div.btn-group(role='group')
             form(action='/idea/' + idea.id + '/vote' method='post')
               div.form-group
-                label(for='vote') Why don't you like this idea?
-                  select#defaultVote.form-control(name='vote')
-                    option(value='-1') Won't succeed
-                    option(value='-2') Too difficult to implement
-                    option(value='-3') Some other reason
-              div.form-group
-                button.btn.btn-primary(type='submit') Submit
+                button.btn.btn-primary#first-button(type='submit' name='vote'
+                                       value='0') Remove Vote
+            button.btn.btn-primary(type='button' data-toggle='modal' data-target='#dvmodal')= voteHeader
+        else
+          - var voteHeader='Cast vote'
+          button.btn.btn-primary(type='button' data-toggle='modal' data-target='#dvmodal')= voteHeader
+
+        div.modal.fade.bs-example-modal-sm#dvmodal(tabindex='-1' role='dialog' aria-labelledby='modallabel' aria-hidden='true')
+          div.modal-dialog.modal-sm
+            div.modal-content
+              div.modal-header
+                button.close(type='button' data-dismiss='modal' aria-label='close')
+                  span(aria-hidden='true') &times;
+                h4.modal-title#modallabel= voteHeader
+              div.modal-body
+                div(role="tabpanel")
+                  ul(class="nav nav-tabs" role="tablist")
+                    li(role="presentation" class="active") <a href="#like" aria-controls="like" role="tab" data-toggle="tab">Like</a>
+                    li(role="presentation") <a href="#dislike" aria-controls="dislike" role="tab" data-toggle="tab">Dislike</a>
+
+                div(class="tab-content")
+                  div(role="tabpanel" class="tab-pane active" id="like")
+                    form(action='/idea/' + idea.id + '/vote' method='post')
+                      div.form-group
+                        label(for='vote') Dollar Vote
+                        p How much money would you commit if this idea begins development?
+                        div.input-group
+                          span.input-group-addon $
+                          input.form-control#dollarVote(
+                            type='number' min='1' max='100000' step='1'
+                            name='vote' placeholder='0')
+                          span.input-group-addon .00
+                      div.form-group
+                        button.btn.btn-primary(type='submit') Submit
+
+                  div(role="tabpanel" class="tab-pane" id="dislike")
+                    form(action='/idea/' + idea.id + '/vote' method='post')
+                      div.form-group
+                        label(for='vote') Why don't you like this idea?
+                          select#defaultVote.form-control(name='vote')
+                            option(value='-1') Won't succeed
+                            option(value='-2') Too difficult to implement
+                            option(value='-3') Some other reason
+                      div.form-group
+                        button.btn.btn-primary(type='submit') Submit

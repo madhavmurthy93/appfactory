@@ -5,12 +5,12 @@ block ideaDeveloper
       div.panel-heading
          p Developer Resources
       div.panel-body
-         if (estimatedmo)
+          if (estimatedmo)
             - var percent = Math.round(commitedmo * 100 / estimatedmo)
             div.progress(data-toggle='tooltip' data-placement='top' title='#{percent}% Completed')
                div.progress-bar(role='progressbar' aria-valuenow='#{commitedmo}' aria-valuemin='0' aria-valuemax='#{estimatedmo}' style='width: #{percent}%')
                   span.sr-only #{percent} %
-         if (userInfo.isDeveloper)
+          if (userInfo.isDeveloper)
             form(action='/idea/' + idea.id + '/devvote' method='post')
                div.form-group
                  label(for='manmo') Man Months
@@ -24,7 +24,7 @@ block ideaDeveloper
                      else
                         input#checkbox-toggle(type='checkbox' name='interested' checked)
                      | I want to work on this project.
-               div.form-group
+                div.form-group
                  label(for='weekly') Available hrs/week
                  div.input-group
                    input.form-control.optional(type='number' min='0' step='1' name='weekly' value='#{devVote.devweekly}' required)
