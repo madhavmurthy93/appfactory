@@ -185,6 +185,7 @@ router.get('/:ideaId', function(req, res) {
     var vote = undefined;
     var devVote = undefined;
     var estimatedmo = undefined;
+    var commitedmo = 0;
     var totalDollarVotes = 0;
     var rejectionVotes;
     if (res.locals.user) {
@@ -271,15 +272,24 @@ router.get('/:ideaId', function(req, res) {
 	    	[ideaId]);
 	}).then(function(rows) {
 		if (rows.length == 1 && rows[0].totalmo) {
-			estimatedmo = rows[0].totalmo;
+			estimatedmo = (rows[0].totalmo * 4 * 40);
 		} 
-
 		return sql.SimpleQueryPromise(
 			'SELECT time_estimate_days, available_time_per_week, available_duration_weeks '
 			+ 'FROM developer_votes WHERE idea=? AND user=?', [ideaId, userId]);
 	}).then(function(rows) {
 		if(rows.length == 1) {
 			devVote = {devmo: rows[0].time_estimate_days, devweekly: rows[0].available_time_per_week, devweeks: rows[0].available_duration_weeks};
+		} else {
+			devVote = {devmo: 0, devweekly: 0, devweeks: 0};
+		}
+
+		return sql.SimpleQueryPromise(
+			'SELECT SUM(available_duration_weeks * available_time_per_week) AS commitedmo FROM '
+			+ 'developer_votes WHERE idea=?', [ideaId]);
+	}).then(function(rows) {
+		if (rows.length == 1) {
+			commitedmo = rows[0].commitedmo;
 		}
 	    // Check if the current user is a developer.
 	    return sql.SimpleQueryPromise(
@@ -300,7 +310,8 @@ router.get('/:ideaId', function(req, res) {
 		userVote: vote,
 		totalDollarVotes: totalDollarVotes,
 		devVote: devVote,
-		estimatedmo: estimatedmo
+		estimatedmo: estimatedmo,
+		commitedmo: commitedmo
 	    });
 	}).catch(function(err) {
 	    console.log(err);
@@ -606,11 +617,15 @@ router.post('/:ideaId/devvote', function(req, res, next) {
 	var manmo = req.body.manmo;
 	var weekly = req.body.weekly;
 	var weeks = req.body.weeks;
-	console.log(ideaId + ' ' + manmo + ' ' + weekly + ' ' + weeks);
+	var interested = req.body.interested;
 	if (!res.locals.user) {
 		throw new Error('Must be logged in to vote.');
 	}
-	data = [res.locals.user.id, ideaId, manmo, weekly, weeks];
+	if (interested) {
+		data = [res.locals.user.id, ideaId, manmo, weekly, weeks];
+	} else {
+		data = [res.locals.user.id, ideaId, manmo, 0, 0];
+	}
 	sql.SimpleQueryPromise(
 		'INSERT INTO developer_votes (user, idea, time_estimate_days, available_time_per_week, available_duration_weeks) '
 			+ 'VALUES (?, ?, ?, ?, ?) '
