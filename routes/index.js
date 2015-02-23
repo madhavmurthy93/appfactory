@@ -7,8 +7,10 @@ var sql = require('../util/sql');
 router.get('/', function(req, res, next) {
     var ideas;
     var filter = req.query.filter;
-    var sortBy = req.query.sortyBy || 'latest';
-
+    var sortBy = req.query.sortBy;
+    
+    console.log('sortBy:' + sortBy);
+    		
     // Get the list of ideas and names of owners.  The query and parameters
     // need to change based on whether we're filtering the results by category
     // or not.
@@ -57,8 +59,14 @@ router.get('/', function(req, res, next) {
 	while (ideaIter < ideas.length) {
 	    ideas[ideaIter].dollarVotes = 0;
 	    ++ideaIter;
-	}		
-
+	}
+	
+	if (sortBy == 'popular')
+	{
+		console.log('ACTUALLY SORTING');
+		ideas.sort(function(a, b) { return a.dollarVotes < b.dollarVotes });
+	}
+		
 	// Grab the list of all categories.  Also count how many ideas there
 	// are in each category.  The left outer join here ensures that we
 	// list all categories even if there are no items in the category.
