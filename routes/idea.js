@@ -184,7 +184,7 @@ router.get('/:ideaId', function(req, res) {
     var userId=-1;
     var vote = undefined;
     var devVote = undefined;
-    var estimatedmo = undefined;
+    var estimatedmo = 0;
     var commitedmo = 0;
     var totalDollarVotes = 0;
     var rejectionVotes;

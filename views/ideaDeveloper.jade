@@ -5,9 +5,12 @@ block ideaDeveloper
       div.panel-heading
          p Developer Resources
       div.panel-body
-          if (estimatedmo)
+          if (estimatedmo != 0)
             - var percent = Math.round(commitedmo * 100 / estimatedmo)
             - var commited = (commitedmo / (40 * 4))
+          else
+            - var percent = 0
+            - var commited = 0
           label Total estimated man months
           p Number of months it will take one dev working 40 hrs/week for 20 days/month to complete project.
           p.text-right= (estimatedmo / (40 * 4)) 
