@@ -28,15 +28,15 @@ block content
 							+CategoryItem(groupClass, entry)
 
 			div.col-md-9
-				p.lead Sort By:
-					if (sortBy == 'popular')  
-						a(href='/')
-							button(type="button" class="btn btn-default") Latest
+				p.lead Sort By:    
+					if (sortBy == 'popular')
+						a(href='/?sortBy=latest')
+							button(type="button" class="btn btn-default") Latest  
 						a(href='/?sortBy=popular')
 							button(type="button" class="btn btn-default active") Popular
 					else
-						a(href='/')
-							button(type="button" class="btn btn-default active") Latest
+						a(href='/?sortBy=latest')
+							button(type="button" class="btn btn-default active") Latest  
 						a(href='/?sortBy=popular')
 							button(type="button" class="btn btn-default") Popular
 				- var n = 0

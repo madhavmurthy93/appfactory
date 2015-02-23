@@ -6,7 +6,7 @@ mixin editPicture
   if (isOwner)
     div.caption
       button.btn.btn-default(type="button" name="removeImage"
-                             onClick="removeImage(#{idea.id}, #{n})") Remove
+                         onClick="removeImage(#{idea.id}, #{n})") Remove
 
 mixin Category
   h4
@@ -28,6 +28,21 @@ mixin Category
 
 block content
   script(src='/javascripts/ideaDetail.js').
+
+  div(class="modal fade" id="deleteDialog" tabindex="-1" role="dialog" aria-labelledby="deleteDialogLabel" aria-hidden="true")
+    div(class="modal-dialog")
+      div(class="modal-content")
+        div(class="modal-header")
+          button(type="button" class="close" data-dismiss="modal" aria-label="Close")
+            span(aria-hidden="true") x
+          h4(class="modal-title" id="deleteDialogLabel") Delete Idea
+        div(class="modal-body")
+          | Are you sure you want to delete this idea?  This cannot be undone.
+        div(class="modal-footer")
+          button(type="button" class="btn btn-default" data-dismiss="modal") Cancel
+          button(type="button" class="btn btn-primary"
+                 onClick="deleteIdea(" + idea.id + ")") Delete
+
   div.container
     div.row
       div.col-md-3
@@ -37,20 +52,18 @@ block content
         div.panel.panel-default
           div.panel-heading 
             h1.panel-title #{idea.name}
+              if (isOwner)
+                button.btn(type="button" data-toggle="modal" data-target="#deleteDialog" style="margin-left: 2em") Delete this idea
+
           div.panel-body
             h4.bold 
-              | Submitted by: 
-              img#profilepic(src='#{idea.userPic}' alt='profile pic')   
-              |   #{idea.ownername}
-            +Category
-            h4.bold Screenshots:
             div.row
               - var n = 0
               div.col-sm-4.col-md-4.col-lg-4
                 div.thumbnail
                   div.thumbnail-container
                     img.thumbnail-img(src="/idea/thumbs/" + idea.id)
-                    +editPicture
+                  +editPicture
               if (screenshotIds.length > 0)
                 each imageId in screenshotIds
                   - n++
@@ -61,7 +74,7 @@ block content
                       div.thumbnail-container
                         a(href="/idea/" + idea.id + "/screens/" + imageId + ".jpg")
                           img.thumbnail-img(src="/idea/" + idea.id + "/screenthumbs/" + imageId + ".jpg")
-                          +editPicture
+                      +editPicture
             if (isOwner)
               form.form-horizontal(action='/idea/' + idea.id + '/screens' method='post' enctype='multipart/form-data')
                 div.form-group
@@ -70,6 +83,11 @@ block content
                 div.form-group
                   div.col-sm-10
                     button.btn.btn-primary(type='submit') Add screenshot
+            h4.bold 
+              | Posted by: 
+              img#profilepic(src='#{idea.userPic}' alt='profile pic')   
+              |   #{idea.ownername} on #{idea.created_at}
+            +Category
             h4.bold Description
             p #{idea.description}
         block comments

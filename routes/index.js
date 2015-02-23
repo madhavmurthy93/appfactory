@@ -7,7 +7,7 @@ var sql = require('../util/sql');
 router.get('/', function(req, res, next) {
     var ideas;
     var filter = req.query.filter;
-    var sortBy = req.query.sortBy;
+    var sortBy = req.query.sortBy || 'latest';
     
     console.log('sortBy:' + sortBy);
     		
@@ -24,7 +24,7 @@ router.get('/', function(req, res, next) {
     var query =
 	'SELECT idea.id as id, idea.name as name, ' 
     	+ 'idea.description as description, idea.category as category, '
-    	+ 'idea.owner_id as owner_id, user.name as ownername '
+    	+ 'idea.owner_id as owner_id, user.name as ownername, idea.created_at as created_at '
     	+ 'FROM ideas idea, users user '
     	+ 'WHERE idea.owner_id = user.id '
         + queryFilter
@@ -63,8 +63,11 @@ router.get('/', function(req, res, next) {
 	
 	if (sortBy == 'popular')
 	{
-		console.log('ACTUALLY SORTING');
 		ideas.sort(function(a, b) { return a.dollarVotes < b.dollarVotes });
+	}
+	else if (sortBy == 'latest')
+	{
+		ideas.sort(function(a, b) { return a.created_at < b.created_at });
 	}
 		
 	// Grab the list of all categories.  Also count how many ideas there
