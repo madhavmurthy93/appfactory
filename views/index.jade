@@ -6,11 +6,29 @@ block content
 		div.row
 			div.col-md-3
 				p.lead Categories
-					div.list-group
-						each category in categories
-							a.list-group-item(href='#')= category
+					div.list-group()
+						mixin CategoryItem(groupClass, entry)
+							- var outFilter = ''
+							if (entry.category != 'All')
+								- outFilter = '?filter=' + encodeURIComponent(entry.category)
+							a.list-group-item(href='/' + outFilter,
+																class=groupClass)
+								span.bold= entry.category
+								if (entry.count)
+									span.badge= entry.count
+
+						- var allCategory = 'all-category'
+						if (filter == undefined)
+							- allCategory = allCategory + ' active'
+						+CategoryItem(allCategory, {category:'All', count:0})
+						each entry in categories
+							- var groupClass = ''
+							if (entry.category == filter)
+								- groupClass = 'active'
+							+CategoryItem(groupClass, entry)
 
 			div.col-md-9
+				p.lead Sort By: Latest  Popular
 				- var n = 0
 				each idea in ideas
 					if (n % 3 == 0)
@@ -18,12 +36,12 @@ block content
 					a(href="/idea/" + idea.id)
 						div.col-sm-4.col-md-4.col-lg-4
 							div.thumbnail
-								img(src='/idea/thumbs/' + idea.id, alt='idea_image')
+								div.thumbnail-container
+									img.thumbnail-img(src='/idea/thumbs/' + idea.id, alt='idea_image')
 								div.caption
 									h4.bold #{idea.name}
 									h5 By: #{idea.ownername}
 									h4.bold DollarVotes: $#{idea.dollarVotes}
-									p.light 
-										| #{idea.description}
+									p.light= idea.description
 					- n++
 					
