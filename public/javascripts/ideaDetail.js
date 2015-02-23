@@ -11,6 +11,26 @@ var removalComplete = function() {
     document.location.reload(true);
 }
 
+var toggleEditCategory = function() {
+    $("#category").hide();
+    $("#editCategory").show();
+}
+
+var submitEditCategory = function(ideaId) {
+    var newCategory = $("#chosenCategory")[0].value;
+
+    var params = "category=" + newCategory;
+
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open('PUT', '/idea/' + ideaId, true);
+    xmlhttp.addEventListener("load", function() {
+	document.location.reload(true);
+    }, false);
+    xmlhttp.setRequestHeader("Content-type",
+			     "application/x-www-form-urlencoded");
+    xmlhttp.send(params);
+}
+
 $(document).ready(function() {
 	if (!($('#checkbox-toggle').prop('checked'))) {
 		$('.optional').prop('disabled', true);

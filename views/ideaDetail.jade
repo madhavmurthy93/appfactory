@@ -2,11 +2,29 @@ extends layout
 block header
   link(rel='stylesheet', href='/stylesheets/ideaDetail.css')
 
-block editPicture
+mixin editPicture
   if (isOwner)
     div.caption
       button.btn.btn-default(type="button" name="removeImage"
-                         onClick="removeImage(#{idea.id}, #{n})") Remove
+                             onClick="removeImage(#{idea.id}, #{n})") Remove
+
+mixin Category
+  h4
+    span.bold Category:
+    span#category= idea.category
+      if (isOwner)
+        button.btn(type='button' onClick="toggleEditCategory()") Edit
+    if (isOwner)
+      span#editCategory(style="display: none")
+        select#chosenCategory.form-control(name='editCategory'
+                                           value=idea.category)
+          each category in categories
+            if (category == idea.category)
+              option(value=category selected)= category
+            else
+              option(value=category)= category
+        button.btn.btn-primary(onClick="submitEditCategory(" + idea.id + ")") Submit
+
 
 block content
   script(src='/javascripts/ideaDetail.js').
@@ -23,7 +41,7 @@ block content
               | Submitted by: 
               img#profilepic(src='#{idea.userPic}' alt='profile pic')   
               |   #{idea.ownername}
-            h4 <span style="font-weight: bold">Category:</span> #{idea.category]
+            +Category
             h4.bold Screenshots:
             div.row
               - var n = 0
@@ -31,7 +49,7 @@ block content
                 div.thumbnail
                   div.thumbnail-container
                     img.thumbnail-img(src="/idea/thumbs/" + idea.id)
-                  block editPicture
+                    +editPicture
               if (screenshotIds.length > 0)
                 each imageId in screenshotIds
                   - n++
@@ -42,7 +60,7 @@ block content
                       div.thumbnail-container
                         a(href="/idea/" + idea.id + "/screens/" + imageId + ".jpg")
                           img.thumbnail-img(src="/idea/" + idea.id + "/screenthumbs/" + imageId + ".jpg")
-                      block editPicture
+                          +editPicture
             if (isOwner)
               form.form-horizontal(action='/idea/' + idea.id + '/screens' method='post' enctype='multipart/form-data')
                 div.form-group
