@@ -7,6 +7,7 @@ var sql = require('../util/sql');
 router.get('/', function(req, res, next) {
     var ideas;
     var filter = req.query.filter;
+    var sortBy = req.query.sortyBy || 'latest';
 
     // Get the list of ideas and names of owners.  The query and parameters
     // need to change based on whether we're filtering the results by category
@@ -25,7 +26,7 @@ router.get('/', function(req, res, next) {
     	+ 'FROM ideas idea, users user '
     	+ 'WHERE idea.owner_id = user.id '
         + queryFilter
-    	+ 'ORDER BY id'
+    	+ 'ORDER BY id DESC'
     sql.SimpleQueryPromise(query, queryParams).then(function(rows) {
 	ideas = rows;
 
@@ -35,14 +36,14 @@ router.get('/', function(req, res, next) {
     			+ 'FROM user_votes ' 
     			+ 'WHERE amount >= 1 '
     			+ 'GROUP BY idea '
-    			+ 'ORDER BY idea');
+    			+ 'ORDER BY idea DESC');
     }).then(function(votedIdeas) {
 	var votedIdeaIter = 0;
 	var ideaIter = 0;
 
 	// Merge the list of votes with the list of ideas.
 	while (ideaIter < ideas.length && votedIdeaIter < votedIdeas.length) {
-	    if (ideas[ideaIter].id < votedIdeas[votedIdeaIter].idea) {
+	    if (ideas[ideaIter].id > votedIdeas[votedIdeaIter].idea) {
 		ideas[ideaIter].dollarVotes = 0;
 		++ideaIter;
 		continue;
@@ -52,6 +53,7 @@ router.get('/', function(req, res, next) {
 	    ++ideaIter;
 	    ++votedIdeaIter;
 	}
+	
 	while (ideaIter < ideas.length) {
 	    ideas[ideaIter].dollarVotes = 0;
 	    ++ideaIter;
