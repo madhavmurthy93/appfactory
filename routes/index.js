@@ -7,7 +7,7 @@ var sql = require('../util/sql');
 router.get('/', function(req, res, next) {
     var ideas;
     var filter = req.query.filter;
-    var sortBy = req.query.sortBy;
+    var sortBy = req.query.sortBy || 'latest';
     
     console.log('sortBy:' + sortBy);
     		
