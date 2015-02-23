@@ -39,11 +39,6 @@ block content
 
           div.panel-body
             h4.bold 
-              | Submitted by: 
-              img#profilepic(src='#{idea.userPic}' alt='profile pic')   
-              |   #{idea.ownername}
-            +Category
-            h4.bold Screenshots:
             div.row
               - var n = 0
               div.col-sm-4.col-md-4.col-lg-4
@@ -70,6 +65,11 @@ block content
                 div.form-group
                   div.col-sm-10
                     button.btn.btn-primary(type='submit') Add screenshot
+            h4.bold 
+              | Submitted by: 
+              img#profilepic(src='#{idea.userPic}' alt='profile pic')   
+              |   #{idea.ownername}
+            +Category
             h4.bold Description
             p #{idea.description}
         block ideaDeveloper
