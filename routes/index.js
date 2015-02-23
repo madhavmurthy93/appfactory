@@ -24,7 +24,7 @@ router.get('/', function(req, res, next) {
     var query =
 	'SELECT idea.id as id, idea.name as name, ' 
     	+ 'idea.description as description, idea.category as category, '
-    	+ 'idea.owner_id as owner_id, user.name as ownername '
+    	+ 'idea.owner_id as owner_id, user.name as ownername, idea.created_at as created_at '
     	+ 'FROM ideas idea, users user '
     	+ 'WHERE idea.owner_id = user.id '
         + queryFilter
@@ -63,12 +63,10 @@ router.get('/', function(req, res, next) {
 	
 	if (sortBy == 'popular')
 	{
-		console.log('sorting by popular');
 		ideas.sort(function(a, b) { return a.dollarVotes < b.dollarVotes });
 	}
 	else if (sortBy == 'latest')
 	{
-		console.log('sorting by latest');
 		ideas.sort(function(a, b) { return a.created_at < b.created_at });
 	}
 		
