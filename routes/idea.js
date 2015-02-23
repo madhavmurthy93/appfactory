@@ -194,6 +194,7 @@ router.get('/:ideaId', function(req, res) {
 
     sql.SimpleQueryPromise(
     			 'SELECT idea.id as id, idea.name as name, '
+    		   + 'DATE_FORMAT(idea.created_at, GET_FORMAT(DATE, \'JIS\')) as created_at, '
     		   +   'idea.description as description, idea.category as category, '
     		   +   'idea.owner_id as owner_id, user.name as ownername, user.profile_pic_url as userPic '
 			   + 'FROM ideas idea, users user '
@@ -213,7 +214,7 @@ router.get('/:ideaId', function(req, res) {
 	    // Check for comments associated with this idea.
 	    return sql.SimpleQueryPromise(
 	    				'SELECT comment.votes, user.name as username, comment.contents, ' 
-	    			  +   'DATE_FORMAT(comment.created_at, GET_FORMAT(TIMESTAMP, \'USA\')) as date '
+	    			  +   'DATE_FORMAT(comment.created_at, GET_FORMAT(DATE, \'JIS\')) as date '
 	    			  + 'FROM comments comment, users user '
 					  + 'WHERE idea = ? AND comment.user = user.id '
 					  + 'ORDER BY created_at DESC', [ideaId]);

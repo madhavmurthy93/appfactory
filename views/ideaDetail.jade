@@ -66,9 +66,9 @@ block content
                   div.col-sm-10
                     button.btn.btn-primary(type='submit') Add screenshot
             h4.bold 
-              | Submitted by: 
+              | Posted by: 
               img#profilepic(src='#{idea.userPic}' alt='profile pic')   
-              |   #{idea.ownername}
+              |   #{idea.ownername} on #{idea.created_at}
             +Category
             h4.bold Description
             p #{idea.description}
