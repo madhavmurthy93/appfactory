@@ -1,12 +1,18 @@
 extends ideaDetail
 
 block voting
+  if (!isLoggedIn)
+    h4.bold
+      a(href='/auth/facebook')
+        i.fa.fa-facebook-official
+        |  Login 
+      | to vote
   div.panel.panel-default
     div.panel-heading 
-      p(style="margin-top: .5em") DollarVotes (DV)
+      p(style="margin-top: .5em") DollarVotes 
     div.panel-body
       p 
-        span.bold Total DV   
+        span.bold Total DollarVotes   
         span.badge.pull-right   $ #{totalDollarVotes}
       if (rejectionVotes)
         p 
@@ -21,10 +27,7 @@ block voting
           if (rejectionVotes[-3])
             li.list-group-item Dislike it for another reason 
               span.badge.pull-right #{rejectionVotes[-3]}
-
-      if (!isLoggedIn)
-        p.lead <a href="/auth/facebook">Log in</a> to vote
-      else
+      if (isLoggedIn)
         if (userVote != undefined)
           p
             span.bold Your vote

@@ -10,20 +10,22 @@ mixin editPicture
 
 mixin Category
   h4
-    span.bold Category:
-    span#category= idea.category
+    span.bold Category   
+    span.smalltext#category= idea.category  
       if (isOwner)
-        button.btn(type='button' onClick="toggleEditCategory()") Edit
+        button.btn.btn-default(type='button' onClick="toggleEditCategory()") Edit
     if (isOwner)
       span#editCategory(style="display: none")
-        select#chosenCategory.form-control(name='editCategory'
-                                           value=idea.category)
-          each category in categories
-            if (category == idea.category)
-              option(value=category selected)= category
-            else
-              option(value=category)= category
-        button.btn.btn-primary(onClick="submitEditCategory(" + idea.id + ")") Submit
+        div.form-group
+          select#chosenCategory.form-control(name='editCategory'
+                                             value=idea.category)
+            each category in categories
+              if (category == idea.category)
+                option(value=category selected)= category
+              else
+                option(value=category)= category
+        div.form-group
+          button.btn.btn-primary(onClick="submitEditCategory(" + idea.id + ")") Submit
 
 
 block content
@@ -53,7 +55,7 @@ block content
           div.panel-heading 
             h1.panel-title #{idea.name}
               if (isOwner)
-                button.btn(type="button" data-toggle="modal" data-target="#deleteDialog" style="margin-left: 2em") Delete this idea
+                button.btn.btn-primary(type="button" data-toggle="modal" data-target="#deleteDialog" style="margin-left: 2em") Delete this idea
 
           div.panel-body
             h4.bold 
@@ -83,10 +85,11 @@ block content
                 div.form-group
                   div.col-sm-10
                     button.btn.btn-primary(type='submit') Add screenshot
-            h4.bold 
-              | Posted by: 
-              img#profilepic(src='#{idea.userPic}' alt='profile pic')   
-              |   #{idea.ownername} on #{idea.created_at}
+            h4 
+              span.bold Author 
+              span.smalltext
+                img#profilepic(src='#{idea.userPic}' alt='profile pic')   
+                |   #{idea.ownername} on #{idea.created_at}
             +Category
             h4.bold Description
             p #{idea.description}

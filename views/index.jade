@@ -31,14 +31,14 @@ block content
 				p.lead Sort By:    
 					if (sortBy == 'popular')
 						a(href='/?sortBy=latest')
-							button(type="button" class="btn btn-default") Latest  
+							button#latest(type="button" class="btn btn-default") Latest  
 						a(href='/?sortBy=popular')
-							button(type="button" class="btn btn-default active") Popular
+							button#popular(type="button" class="btn btn-default active") Popular
 					else
 						a(href='/?sortBy=latest')
-							button(type="button" class="btn btn-default active") Latest  
+							button#latest(type="button" class="btn btn-default active") Latest  
 						a(href='/?sortBy=popular')
-							button(type="button" class="btn btn-default") Popular
+							button#popular(type="button" class="btn btn-default") Popular
 				- var n = 0
 				each idea in ideas
 					if (n % 3 == 0)
