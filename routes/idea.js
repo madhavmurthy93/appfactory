@@ -177,6 +177,7 @@ router.get('/thumbs/:ideaId', function(req, res) {
 router.get('/:ideaId', function(req, res) {
     var ideaId = req.params.ideaId;
     var idea;
+    var categories;
     var comments;
     var screenshotIds;
     var isDeveloper = false;
@@ -217,6 +218,12 @@ router.get('/:ideaId', function(req, res) {
 					  + 'ORDER BY created_at DESC', [ideaId]);
 	}).then(function(rows) {
 	    comments = rows;
+
+	    // Get the list of categories.
+	    return sql.SimpleQueryPromise(
+		'SELECT category FROM categories ORDER BY category ASC');
+	}).then(function(rows) {
+	    categories = rows.map(function(row) { return row.category; });
 
 	    // Check for any screenshots associated with this idea.
 	    return sql.SimpleQueryPromise(
@@ -283,6 +290,7 @@ router.get('/:ideaId', function(req, res) {
 	    }
 	    res.render('comments', {
 		idea: idea,
+		categories: categories,
 		comments: comments,
 		isOwner: idea.owner_id == userId,
 		isLoggedIn: userId != -1,
@@ -298,6 +306,23 @@ router.get('/:ideaId', function(req, res) {
 	    console.log(err);
 	    throw err;
 	});
+});
+
+
+router.put('/:ideaId', function(req, res) {
+    var ideaId = req.params.ideaId;
+    var category = req.body.category;
+    if (!category) {
+	throw new Error('Category not specified');
+    }
+
+    VerifyOwnerPromise(res.locals.user, ideaId, res).then(function(userId) {
+	return sql.SimpleQueryPromise(
+	    'UPDATE ideas SET category=? WHERE id=?', [category, ideaId]);
+    }).then(function() {
+	// Success.  Return an empty HTTP 200.
+	res.send('');
+    });
 });
 
 
