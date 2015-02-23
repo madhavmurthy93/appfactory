@@ -57,14 +57,24 @@ router.get('/', function(req, res, next) {
 	    ++ideaIter;
 	}		
 
-	// Grab the list of all categories.
+	// Grab the list of all categories.  Also count how many ideas there
+	// are in each category.  The left outer join here ensures that we
+	// list all categories even if there are no items in the category.
+	// Categories with no items will have NULL as their count.
 	return sql.SimpleQueryPromise(
-	    'SELECT category FROM categories ORDER BY category ASC');
+	    'SELECT categories.category, count AS count '
+		+ 'FROM categories LEFT OUTER JOIN ('
+		+ '        SELECT category, COUNT(*) AS count '
+		+ '          FROM ideas '
+		+ '          GROUP BY category) AS counts '
+		+ '  ON counts.category=categories.category '
+		+ 'GROUP BY categories.category '
+		+ 'ORDER BY category ASC');
     }).then(function(rows) {
-	var categories = rows.map(function(row) { return row.category; });
 	res.render('index',
 		   { ideas: ideas,
-		     categories: categories });
+		     categories: rows,
+		     filter: filter});
     }).catch(function(err) {
 	console.log(err);
 	res.send('');

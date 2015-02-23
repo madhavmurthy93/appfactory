@@ -6,10 +6,26 @@ block content
 		div.row
 			div.col-md-3
 				p.lead Categories
-					div.list-group
-						a.list-group-item.all-category(href='/') All
-						each category in categories
-							a.list-group-item(href='?filter=' + category)= category
+					div.list-group()
+						mixin CategoryItem(groupClass, entry)
+							- var outFilter = ''
+							if (entry.category != 'All')
+								- outFilter = '?filter=' + encodeURIComponent(entry.category)
+							a.list-group-item(href='/' + outFilter,
+																class=groupClass)
+								span.bold= entry.category
+								if (entry.count)
+									span.badge= entry.count
+
+						- var allCategory = 'all-category'
+						if (filter == undefined)
+							- allCategory = allCategory + ' active'
+						+CategoryItem(allCategory, {category:'All', count:0})
+						each entry in categories
+							- var groupClass = ''
+							if (entry.category == filter)
+								- groupClass = 'active'
+							+CategoryItem(groupClass, entry)
 
 			div.col-md-9
 				- var n = 0
