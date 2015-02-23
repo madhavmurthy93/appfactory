@@ -51,7 +51,8 @@ block content
         div.panel.panel-default
           div.panel-heading 
             h1.panel-title #{idea.name}
-              button.btn(type="button" data-toggle="modal" data-target="#deleteDialog" style="margin-left: 2em") Delete this idea
+              if (isOwner)
+                button.btn(type="button" data-toggle="modal" data-target="#deleteDialog" style="margin-left: 2em") Delete this idea
 
           div.panel-body
             h4.bold 
