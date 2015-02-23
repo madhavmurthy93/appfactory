@@ -1,5 +1,38 @@
 extends voting
 
 block ideaDeveloper
-  if (userInfo.isDeveloper)
-    p You are a developer!  Congratulations.
+   div.panel.panel-default
+      div.panel-heading
+         p Developer Resources
+      div.panel-body
+         if (estimatedmo)
+            - var percent = Math.round(commitedmo * 100 / estimatedmo)
+            div.progress(data-toggle='tooltip' data-placement='top' title='#{percent}% Completed')
+               div.progress-bar(role='progressbar' aria-valuenow='#{commitedmo}' aria-valuemin='0' aria-valuemax='#{estimatedmo}' style='width: #{percent}%')
+                  span.sr-only #{percent} %
+         if (userInfo.isDeveloper)
+            form(action='/idea/' + idea.id + '/devvote' method='post')
+               div.form-group
+                 label(for='manmo') Man Months
+                 div.input-group
+                   input.form-control(type='number' min='1' step='1' name='manmo' value='#{devVote.devmo}' required)
+                   span.input-group-addon mo.
+               div.checkbox
+                  label
+                     if (devVote.devweekly == 0)
+                        input#checkbox-toggle(type='checkbox' name='interested') 
+                     else
+                        input#checkbox-toggle(type='checkbox' name='interested' checked)
+                     | I want to work on this project.
+               div.form-group
+                 label(for='weekly') Available hrs/week
+                 div.input-group
+                   input.form-control.optional(type='number' min='0' step='1' name='weekly' value='#{devVote.devweekly}' required)
+                   span.input-group-addon hrs/week
+               div.form-group
+                 label(for='weeks') Available weeks
+                 div.input-group
+                   input.form-control.optional(type='number' min='0' step='1' name='weeks' value='#{devVote.devweeks}' required)
+                   span.input-group-addon weeks
+               div.form-group
+                 button.btn.btn-primary(type='submit') Submit

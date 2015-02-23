@@ -10,3 +10,20 @@ var removeImage = function(ideaId, imageNum) {
 var removalComplete = function() {
     document.location.reload(true);
 }
+
+$(document).ready(function() {
+	if (!($('#checkbox-toggle').prop('checked'))) {
+		$('.optional').prop('disabled', true);
+	}
+	$('[data-toggle="tooltip"]').tooltip();
+
+	$('#checkbox-toggle').change(function() {
+		console.log('Hello world!');
+		if (this.checked) {
+			$('.optional').prop('disabled', false);
+		} else {
+			$('.optional').prop('disabled', true);
+		}
+	});
+
+});
