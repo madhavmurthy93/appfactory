@@ -84,7 +84,8 @@ router.get('/', function(req, res, next) {
 	res.render('index',
 		   { ideas: ideas,
 		     categories: rows,
-		     filter: filter});
+		     filter: filter,
+		     sortBy: sortBy});
     }).catch(function(err) {
 	console.log(err);
 	res.send('');
