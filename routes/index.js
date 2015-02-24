@@ -69,7 +69,30 @@ router.get('/', function(req, res, next) {
 	{
 		ideas.sort(function(a, b) { return a.created_at < b.created_at });
 	}
-		
+
+	return sql.SimpleQueryPromise(
+		'SELECT idea, COUNT(user) AS devs '
+		+ 'FROM developer_votes '
+		+ 'WHERE available_time_per_week > 0 '
+		+ 'GROUP BY idea '
+		+ 'ORDER BY idea DESC');
+	}).then(function(rows) {
+		var devsIter = 0;
+		var ideaIter = 0;
+		while (ideaIter < ideas.length && devsIter < rows.length) {
+			if (ideas[ideaIter].id > rows[devsIter].idea) {
+				ideas[ideaIter].devs = 0;
+				ideaIter += 1;
+				continue;
+			}
+			ideas[ideaIter].devs = rows[devsIter].devs;
+			ideaIter += 1;
+			devsIter += 1;
+		}
+		while(ideaIter < ideas.length) {
+			ideas[ideaIter].devs = 0;
+			ideaIter += 1;
+		}
 	// Grab the list of all categories.  Also count how many ideas there
 	// are in each category.  The left outer join here ensures that we
 	// list all categories even if there are no items in the category.
