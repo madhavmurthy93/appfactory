@@ -37,7 +37,7 @@ var SimpleQueryPromise = function(query, params) {
 	
 	connection.query(query, params, function(err, rows) {
 	    connection.end();
-	    if (err) throw err;
+	    reject(err);
 	    resolve(rows);
 	});
     });

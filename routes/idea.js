@@ -169,6 +169,12 @@ router.get('/thumbs/:ideaId', function(req, res) {
 		    './public/images/no_image.gif');
 		readStream.pipe(res);
 	    }
+	}).catch(function(err) {
+	    res.status(500);
+	    res.render('error', {
+		message: 'SQL error getting idea ' + ideaId + ' thumbnail.',
+		error: {}
+	    });
 	});
 });
 
