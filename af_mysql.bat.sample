@@ -1,1 +1,1 @@
-mysql --user=ba340b6ae2bfd8 --host=us-cdbr-iron-east-01.cleardb.net --database=heroku_606a7aec7568703 --password=<put database pwd here>
+mysql --user=ba340b6ae2bfd8 --host=us-cdbr-iron-east-01.cleardb.net --database=heroku_606a7aec7568703 --password=<enter heroku database password>
