@@ -122,9 +122,9 @@ router.get('/fake:fakeId', function(req, res, next) {
     var fakeIdMap = {
 	0: 'WelcomeToProject.png',
 	1: 'FakeSourceRepository.png',
-	2: 'FakeSourceRepository.png'
+	2: 'AppFactorySlide.jpg'
     };
-    var imageName = fakeIdMap[fakeId] || 'FakeSourceRepository.png';
+    var imageName = fakeIdMap[fakeId] || 'AppFactorySlide.jpg'
 
     res.send('<html><body><a href="fake' + (fakeId + 1)
 	     + '"><img src="images/' + imageName + '"></a>'
