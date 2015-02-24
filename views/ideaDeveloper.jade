@@ -11,23 +11,22 @@ block ideaDeveloper
           else
             - var percent = 0
             - var commited = 0
-          label Total estimated man months
-          p Number of months it will take one dev working 40 hrs/week for 20 days/month to complete project.
-          p.text-right= (estimatedmo / (40 * 4)) 
-            |   mo.
+          p
+            ul.list-group
+                li.list-group-item(data-toggle='tooltip' data-placement='top' title="Months taken to complete project assuming only 1 developer is working 40 hrs/week") Avg estimated man months
+                  span.badge.pull-right= (estimatedmo / (40 * 4))
           div.progress
              div.progress-bar(data-toggle='tooltip' data-placement='top' title='#{commited} mo. (#{percent}%) Commited' role='progressbar' aria-valuenow='#{commitedmo}' aria-valuemin='0' aria-valuemax='#{estimatedmo}' style='width: #{percent}%')
                 span.sr-only #{percent} %
           if (userInfo.isDeveloper)
             if (devVote != undefined)
-              p 
-                span.bold Your estimate and commitment
+              p
               ul.list-group
-                li.list-group-item Estimated man months
+                li.list-group-item Your estimated man months
                   span.badge.pull-right= devVote.devmo
-                li.list-group-item Available hrs/week
+                li.list-group-item Your available hrs/week
                   span.badge.pull-right= devVote.devweekly
-                li.list-group-item Available weeks 
+                li.list-group-item Your available weeks 
                   span.badge.pull-right= devVote.devweeks
               - var devHeader = 'Change your estimate'
               button.btn.btn-primary(type='button' data-toggle='modal' data-target='#devmodal')= devHeader
@@ -45,7 +44,7 @@ block ideaDeveloper
                   div.modal-body 
                     form(action='/idea/' + idea.id + '/devvote' method='post')
                        div.form-group
-                         label(for='manmo') Estimated man months
+                         label(data-toggle='tooltip' data-placement='top' title="Months taken to complete project assuming only 1 developer is working 40 hrs/week" for='manmo') Your estimated man months
                          div.input-group
                            input.form-control(type='number' min='1' step='1' name='manmo' value='#{devVote.devmo}' required)
                            span.input-group-addon mo.
@@ -57,12 +56,12 @@ block ideaDeveloper
                                 input#checkbox-toggle(type='checkbox' name='interested' checked)
                              | I want to work on this project.
                         div.form-group
-                         label(for='weekly') Available hrs/week
+                         label(for='weekly') Your available hrs/week
                          div.input-group
                            input.form-control.optional(type='number' min='0' step='1' name='weekly' value='#{devVote.devweekly}' required)
                            span.input-group-addon hrs/week
                        div.form-group
-                         label(for='weeks') Available weeks
+                         label(for='weeks') Your available weeks
                          div.input-group
                            input.form-control.optional(type='number' min='0' step='1' name='weeks' value='#{devVote.devweeks}' required)
                            span.input-group-addon weeks
