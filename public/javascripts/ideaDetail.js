@@ -45,7 +45,8 @@ $(document).ready(function() {
 	if (!($('#checkbox-toggle').prop('checked'))) {
 		$('.optional').prop('disabled', true);
 	}
-	$('.progress-bar').tooltip('show');
+    $('.manmo').tooltip();
+	$('.progress').tooltip('show');
 
 	$('#checkbox-toggle').change(function() {
 		console.log('Hello world!');

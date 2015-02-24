@@ -11,22 +11,24 @@ block ideaDeveloper
           else
             - var percent = 0
             - var commited = 0
-          p
-            ul.list-group
-                li.list-group-item(data-toggle='tooltip' data-placement='top' title="Months taken to complete project assuming only 1 developer is working 40 hrs/week") Avg estimated man months
-                  span.badge.pull-right= (estimatedmo / (40 * 4))
-          div.progress
-             div.progress-bar(data-toggle='tooltip' data-placement='top' title='#{commited} mo. (#{percent}%) Commited' role='progressbar' aria-valuenow='#{commitedmo}' aria-valuemin='0' aria-valuemax='#{estimatedmo}' style='width: #{percent}%')
+          p.manmo(data-toggle='tooltip' data-placement='top' title='Months taken to complete project assuming only 1 developer is working 40 hrs/week.')
+            span.bold Avg. estimated man months
+            span.badge.pull-right= (estimatedmo / (40 * 4))
+          p.text-right= (estimatedmo / (40 * 4)) 
+            |   mo.
+          div.progress(data-toggle='tooltip' data-placement='bottom' title='#{commited} mo. (#{percent}%) Commited')
+             div.progress-bar(role='progressbar' aria-valuenow='#{commitedmo}' aria-valuemin='0' aria-valuemax='#{estimatedmo}' style='width: #{percent}%')
                 span.sr-only #{percent} %
           if (userInfo.isDeveloper)
             if (devVote != undefined)
               p
+                span.bold Your estimate and commitment
               ul.list-group
-                li.list-group-item Your estimated man months
+                li.list-group-item Estimated man months
                   span.badge.pull-right= devVote.devmo
-                li.list-group-item Your available hrs/week
+                li.list-group-item Available hrs/week
                   span.badge.pull-right= devVote.devweekly
-                li.list-group-item Your available weeks 
+                li.list-group-item Available weeks 
                   span.badge.pull-right= devVote.devweeks
               - var devHeader = 'Change your estimate'
               button.btn.btn-primary(type='button' data-toggle='modal' data-target='#devmodal')= devHeader
