@@ -113,8 +113,11 @@ router.get('/', function(req, res, next) {
 		     filter: filter,
 		     sortBy: sortBy});
     }).catch(function(err) {
-	console.log(err);
-	res.send('');
+	res.status(500);
+	res.render('error', {
+	    message: 'Error getting ideas',
+	    error: err || {}
+	});
     });
 });
 
