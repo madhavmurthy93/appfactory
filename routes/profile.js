@@ -26,14 +26,7 @@ router.post('/setDeveloper', function(req, res, next) {
 	    // Also update the cached user object, in the session.
 	    res.locals.user.is_developer = parseInt(req.body.isDeveloper);
 	    res.send('');
-	}).catch(function(err) {
-	    console.log('setDeveloper error: ', err);
-	    res.status(500);
-	    res.render('error', {
-		message: err.message,
-		error: {}
-	    });
-	});
+	}).catch(next);  // Pass errors to the error handler.
 });
 
 module.exports = router;

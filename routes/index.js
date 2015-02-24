@@ -112,13 +112,7 @@ router.get('/', function(req, res, next) {
 		     categories: rows,
 		     filter: filter,
 		     sortBy: sortBy});
-    }).catch(function(err) {
-	res.status(500);
-	res.render('error', {
-	    message: 'Error getting ideas',
-	    error: err || {}
-	});
-    });
+    }).catch(next);  // Pass errors to next, so they go to the error handler.
 });
 
 
@@ -127,10 +121,11 @@ router.get('/fake:fakeId', function(req, res, next) {
     var fakeId = parseInt(req.params.fakeId);
     var fakeIdMap = {
 	0: 'WelcomeToProject.png',
-	1: 'FakeSourceRepository.png',
-	2: 'FakeSourceRepository.png'
+	1: 'roadmap_mock.jpg',
+	2: 'FakeSourceRepository.png',
+	3: 'AppFactorySlide.jpg'
     };
-    var imageName = fakeIdMap[fakeId] || 'FakeSourceRepository.png';
+    var imageName = fakeIdMap[fakeId] || 'AppFactorySlide.jpg'
 
     res.send('<html><body><a href="fake' + (fakeId + 1)
 	     + '"><img src="images/' + imageName + '"></a>'

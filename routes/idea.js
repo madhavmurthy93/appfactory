@@ -19,7 +19,7 @@ var SCREENSHOT_SIZE = {
 
 
 // Create an idea page. This is where users enter info for a new idea.
-router.get('/', function(req, res) {
+router.get('/', function(req, res, next) {
     if (!res.locals.user) {
 	// The user isn't logged in.  Redirect to the login page.
 	res.redirect('/auth/facebook');
@@ -31,13 +31,7 @@ router.get('/', function(req, res) {
 	.then(function(rows) {
 	    var categories = rows.map(function(row) { return row.category; });
 	    res.render('idea', { categories: categories });
-	}).catch(function(err) {
-	    res.status(500);
-	    res.render('error', {
-		message: 'Failure retrieving categories.',
-		error: {}
-	    });
-	});
+	}).catch(next);  // Pass errors to the default error handler.
 });
 
 
@@ -149,14 +143,12 @@ router.post('/',
 			return InsertIntoDb(req, ideaId, image, ownerId);
 		    }).then(function() {
 			res.redirect('/idea/' + ideaId);
-		    }).catch(function(err) {
-			console.log('Create idea error:', err);
-		    });
+		    }).catch(next);  // Pass errors to the error handler.
 	    });
 
 
 // Return thumbnail images.
-router.get('/thumbs/:ideaId', function(req, res) {
+router.get('/thumbs/:ideaId', function(req, res, next) {
     var ideaId = req.params.ideaId;
     sql.SimpleQueryPromise('SELECT thumbnail FROM ideas WHERE id=?', [ideaId])
 	.then(function(rows) {
@@ -169,18 +161,12 @@ router.get('/thumbs/:ideaId', function(req, res) {
 		    './public/images/no_image.gif');
 		readStream.pipe(res);
 	    }
-	}).catch(function(err) {
-	    res.status(500);
-	    res.render('error', {
-		message: 'SQL error getting idea ' + ideaId + ' thumbnail.',
-		error: {}
-	    });
-	});
+	}).catch(next);  // Pass errors to the error handler.
 });
 
 
 // The idea detail page.
-router.get('/:ideaId', function(req, res) {
+router.get('/:ideaId', function(req, res, next) {
     var ideaId = req.params.ideaId;
     var idea;
     var categories;
@@ -329,31 +315,31 @@ router.get('/:ideaId', function(req, res) {
 		commitedmo: commitedmo,
 		commitedDevs: commitedDevs
 	    });
-	}).catch(function(err) {
-	    console.log(err);
-	    throw err;
-	});
+	}).catch(next);  // Pass errors to the error handler.
 });
 
 
-router.put('/:ideaId', function(req, res) {
+router.put('/:ideaId', function(req, res, next) {
     var ideaId = req.params.ideaId;
-    var category = req.body.category;
-    if (!category) {
-	throw new Error('Category not specified');
+    var patch = {};
+    if (req.body.category) {
+	patch.category = req.body.category;
+    }
+    if (req.body.description) {
+	patch.description = req.body.description;
     }
 
     VerifyOwnerPromise(res.locals.user, ideaId, res).then(function(userId) {
 	return sql.SimpleQueryPromise(
-	    'UPDATE ideas SET category=? WHERE id=?', [category, ideaId]);
+	    'UPDATE ideas SET ? WHERE id=?', [patch, ideaId]);
     }).then(function() {
 	// Success.  Return an empty HTTP 200.
 	res.send('');
-    });
+    }).catch(next);  // Pass errors to the error handler.
 });
 
 
-router.delete('/:ideaId', function(req, res) {
+router.delete('/:ideaId', function(req, res, next) {
     var ideaId = req.params.ideaId;
 
     VerifyOwnerPromise(res.locals.user, ideaId, res).then(function(userId) {
@@ -361,7 +347,7 @@ router.delete('/:ideaId', function(req, res) {
     }).then(function() {
 	// Success.  Return an empty HTTP 200.
 	res.send('');
-    });
+    }).catch(next);  // Pass errors to the error handler.
 });
 
 
@@ -382,12 +368,7 @@ var VerifyOwnerPromise = function(user, ideaId, res) {
 			       [ideaId])
 	    .then(function(rows) {
 		if (rows.length != 1 || rows[0].owner_id != userId) {
-		    res.status(403);
-		    res.render('error', {
-			message: 'Must be the owner of this idea.',
-			error: {}
-		    });
-		    reject('Must be the owner of this idea.');
+		    reject(new Error('Must be the owner of this idea.'));
 		}
 		resolve(userId);
 	    });
@@ -450,10 +431,7 @@ var HandlePostScreen = function(req, res, next) {
 						  [imageId, ideaId, image]);
 		}).then(function() {
 		    res.redirect('/idea/' + ideaId);
-		}).catch(function(err) {
-		    console.log('HandlePostScreen error:', err);
-		    res.send('');
-		});
+		}).catch(next);  // Pass errors to the error handler.
 	}
     });
 };
@@ -497,7 +475,7 @@ router.get('/:ideaId/screens/:screenId.jpg', function(req, res, next) {
 	.then(function(image) {
 	    res.writeHead(200, {'Content-Type': 'image/jpg'});
 	    res.end(image, 'binary');
-	});
+	}).catch(next);  // Pass errors to the error handler.
 });
 
 
@@ -523,14 +501,7 @@ router.delete('/:ideaId/screens/:screenIndex', function(req, res, next) {
 		    .then(function() {
 			// Success.  Send an empty HTTP 200 response.
 			res.send('');
-		    }).catch(function(err) {
-			console.log('Error deleting thumbnail:', err);
-			res.status(500);
-			res.render('error', {
-			    message: 'Error deleting thumbnail.',
-			    error: {}
-			});
-		    });
+		    }).catch(next);  // Pass errors to the error handler.
 	    } else {
 		// Delete one of the screenshots.  First, map from screen index
 		// to screen ID.
@@ -548,14 +519,7 @@ router.delete('/:ideaId/screens/:screenIndex', function(req, res, next) {
 		    }).then(function() {
 			// Success.  Send an empty HTTP 200 response.
 			res.send('');
-		    }).catch(function(err) {
-			console.log('Error deleting image:', err);
-			res.status(500);
-			res.render('error', {
-			    message: 'Error deleting image.',
-			    error: {}
-			});
-		    });
+		    }).catch(next);  // Pass errors to the error handler.
 	    }
 	});
 });
@@ -574,8 +538,7 @@ router.get('/:ideaId/screenthumbs/:screenId.jpg', function(req, res, next) {
 		    res.writeHead(200, {'Content-Type': 'image/jpg'});
 		    res.end(resized, 'binary');
 		})
-
-	});
+	}).catch(next);  // Pass errors to the error handler.
 });
 
 // Comment on an idea
@@ -595,9 +558,7 @@ router.post('/:ideaId/comment', function(req, res, next) {
     		[res.locals.user.id, ideaId, comment])
 	.then(function() {
     	    res.redirect('/idea/' + ideaId);
-	}).catch(function(err) {
-    	    console.log(err);
-    	});
+	}).catch(next);  // Pass errors to the error handler.
 });
 
 
@@ -635,9 +596,7 @@ router.post('/:ideaId/vote', function(req, res, next) {
     }
     query.then(function() {
 	res.redirect('/idea/' + ideaId);
-    }).catch(function(err) {
-	console.log(err);
-    });
+    }).catch(next);  // Pass errors to the error handler.
 });
 
 router.post('/:ideaId/devvote', function(req, res, next) {
@@ -664,9 +623,7 @@ router.post('/:ideaId/devvote', function(req, res, next) {
 			+ 'available_duration_weeks=VALUES(available_duration_weeks)', data)
 	.then(function() {
 		res.redirect('/idea/' + ideaId);
-	}).catch(function(err) {
-		console.log(err);
-	});
+	}).catch(next);  // Pass errors to the error handler.
 });
 
 

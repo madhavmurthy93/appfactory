@@ -13,9 +13,7 @@ router.post('/', function(req, res, next) {
     sql.SimpleQueryPromise('INSERT INTO contact_us_emails SET ?', entry)
 	.then(function() {
     	    res.redirect('/about');
-	}).catch(function(err) {
-    	    console.log(err);
-    	});
+	}).catch(next);  // Pass errors to the error handler.
 });
 
 module.exports = router;
