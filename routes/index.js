@@ -121,8 +121,9 @@ router.get('/fake:fakeId', function(req, res, next) {
     var fakeId = parseInt(req.params.fakeId);
     var fakeIdMap = {
 	0: 'WelcomeToProject.png',
-	1: 'FakeSourceRepository.png',
-	2: 'AppFactorySlide.jpg'
+	1: 'roadmap_mock.jpg',
+	2: 'FakeSourceRepository.png',
+	3: 'AppFactorySlide.jpg'
     };
     var imageName = fakeIdMap[fakeId] || 'AppFactorySlide.jpg'
 
