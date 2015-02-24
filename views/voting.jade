@@ -9,10 +9,10 @@ block voting
       | to vote
   div.panel.panel-default
     div.panel-heading 
-      p(style="margin-top: .5em") DollarVotes 
+      p(style="margin-top: .5em") Dollar votes 
     div.panel-body
       p 
-        span.bold Total DollarVotes   
+        span.bold Total dollar votes   
         span.badge.pull-right   $ #{totalDollarVotes}
       if (rejectionVotes)
         p 
@@ -80,7 +80,7 @@ block voting
                   div(role="tabpanel" class="tab-pane #{likeclass}" id="like")
                     form(action='/idea/' + idea.id + '/vote' method='post')
                       div.form-group
-                        label(for='vote') Dollar Vote
+                        label(for='vote') Dollar vote
                         p How much money would you commit if this idea begins development?
                         div.input-group
                           span.input-group-addon $
