@@ -51,15 +51,14 @@ block content
 								div.caption
 									h4 
 										span.bold #{idea.name}
-									p.light= idea.description
+									p.light.description= idea.description
 									div.caption-footer
 										div.pull-left
 											p
 												span.badge(style="background-color:#2FBA4F") $ #{idea.dollarVotes}
 											p.smalltext Dollar votes
-										div.pull-right#addmargin
+										div.pull-right.addmargin
 											p
 												span.badge(style="background-color:#2FBA4F") 0
 											p.smalltext Devs commited
 					- n++
-					

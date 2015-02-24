@@ -1,6 +1,7 @@
 .caption {
 	height: 200px;
 	overflow: hidden;
+	position: relative;
 }
 
 .all-category {
@@ -40,10 +41,6 @@
 	font-size: 14px;
 }
 
-.caption {
-	position: relative;
-}
-
 .caption-footer {
 	width: 100%;
 	position: absolute;
@@ -51,7 +48,12 @@
 	text-align: center;
 }
 
-#addmargin {
+.addmargin {
 	margin-right: 20px;
 	text-align: center;
+}
+
+.description {
+	height: 80px;
+	overflow: hidden;
 }
