@@ -112,13 +112,7 @@ router.get('/', function(req, res, next) {
 		     categories: rows,
 		     filter: filter,
 		     sortBy: sortBy});
-    }).catch(function(err) {
-	res.status(500);
-	res.render('error', {
-	    message: 'Error getting ideas',
-	    error: err || {}
-	});
-    });
+    }).catch(next);  // Pass errors to next, so they go to the error handler.
 });
 
 
