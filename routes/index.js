@@ -116,7 +116,7 @@ router.get('/', function(req, res, next) {
 	res.status(500);
 	res.render('error', {
 	    message: 'Error getting ideas',
-	    error: err
+	    error: err || {}
 	});
     });
 });
