@@ -12,8 +12,8 @@ block voting
       p(style="margin-top: .5em") Dollar votes 
     div.panel-body
       p 
-        span.bold Total dollar votes   
-        span.badge.pull-right   $ #{totalDollarVotes}
+        span.bold Total Dollar Votes   
+        span(style="background-color:#2FBA4F").badge.pull-right $ #{totalDollarVotes}
       if (rejectionVotes)
         p 
           span.bold Negative votes
@@ -97,15 +97,15 @@ block voting
                         label(for='vote') Why don't you like this idea?
                         select.form-control#defaultVote(name='vote')
                           if (userVote == -3)
-                            option(value='-1') Won't succeed
+                            option(value='-1') Don't think it will succeed
                             option(value='-2') Too difficult to implement
                             option(value='-3' selected) Some other reason
                           else if (userVote == -2)
-                            option(value='-1') Won't succeed
+                            option(value='-1') Don't think it will succeed
                             option(value='-2' selected) Too difficult to implement
                             option(value='-3') Some other reason
                           else
-                            option(value='-1' selected) Won't succeed
+                            option(value='-1' selected) Don't think it will succeed
                             option(value='-2') Too difficult to implement
                             option(value='-3') Some other reason
                       div.form-group

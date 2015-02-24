@@ -49,9 +49,17 @@ block content
 								div.thumbnail-container
 									img.thumbnail-img(src='/idea/thumbs/' + idea.id, alt='idea_image')
 								div.caption
-									h4.bold #{idea.name}
-									h5 By: #{idea.ownername}
-									h4.bold DollarVotes: $#{idea.dollarVotes}
+									h4 
+										span.bold #{idea.name}
 									p.light= idea.description
+									div.caption-footer
+										div.pull-left
+											p
+												span.badge(style="background-color:#2FBA4F") $ #{idea.dollarVotes}
+											p.smalltext Dollar votes
+										div.pull-right#addmargin
+											p
+												span.badge(style="background-color:#2FBA4F") 0
+											p.smalltext Devs commited
 					- n++
 					

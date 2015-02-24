@@ -35,3 +35,23 @@
 	border-bottom-left-radius: 0;
 	border-top-left-radius: 0;
 }
+
+.smalltext {
+	font-size: 14px;
+}
+
+.caption {
+	position: relative;
+}
+
+.caption-footer {
+	width: 100%;
+	position: absolute;
+	bottom: 0;
+	text-align: center;
+}
+
+#addmargin {
+	margin-right: 20px;
+	text-align: center;
+}
