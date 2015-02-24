@@ -45,7 +45,7 @@ $(document).ready(function() {
 	if (!($('#checkbox-toggle').prop('checked'))) {
 		$('.optional').prop('disabled', true);
 	}
-    $('.manmo').tooltip();
+    $('[data-toggle="tooltip"]').tooltip();
 	$('.progress').tooltip('show');
 
 	$('#checkbox-toggle').change(function() {
