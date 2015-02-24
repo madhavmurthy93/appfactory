@@ -60,15 +60,6 @@ router.get('/', function(req, res, next) {
 	    ideas[ideaIter].dollarVotes = 0;
 	    ++ideaIter;
 	}
-	
-	if (sortBy == 'popular')
-	{
-		ideas.sort(function(a, b) { return a.dollarVotes < b.dollarVotes });
-	}
-	else if (sortBy == 'latest')
-	{
-		ideas.sort(function(a, b) { return a.created_at < b.created_at });
-	}
 
 	return sql.SimpleQueryPromise(
 		'SELECT idea, COUNT(user) AS devs '
@@ -92,6 +83,15 @@ router.get('/', function(req, res, next) {
 		while(ideaIter < ideas.length) {
 			ideas[ideaIter].devs = 0;
 			ideaIter += 1;
+		}
+
+		if (sortBy == 'popular')
+		{
+			ideas.sort(function(a, b) { return a.dollarVotes < b.dollarVotes });
+		}
+		else if (sortBy == 'latest')
+		{
+			ideas.sort(function(a, b) { return a.created_at < b.created_at });
 		}
 	// Grab the list of all categories.  Also count how many ideas there
 	// are in each category.  The left outer join here ensures that we
