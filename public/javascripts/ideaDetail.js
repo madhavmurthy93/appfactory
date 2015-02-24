@@ -46,7 +46,6 @@ $(document).ready(function() {
 		$('.optional').prop('disabled', true);
 	}
     $('[data-toggle="tooltip"]').tooltip();
-	$('.progress').tooltip('show');
 
 	$('#checkbox-toggle').change(function() {
 		console.log('Hello world!');

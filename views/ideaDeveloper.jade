@@ -14,11 +14,13 @@ block ideaDeveloper
           p.manmo(data-toggle='tooltip' data-placement='top' title='Months taken to complete project assuming only 1 developer is working 40 hrs/week.')
             span.bold Avg. estimated man months
             span.badge.pull-right= (estimatedmo / (40 * 4))
-          p.text-right= (estimatedmo / (40 * 4)) 
-            |   mo.
-          div.progress(data-toggle='tooltip' data-placement='bottom' title='#{commited} mo. (#{percent}%) Commited')
-             div.progress-bar(role='progressbar' aria-valuenow='#{commitedmo}' aria-valuemin='0' aria-valuemax='#{estimatedmo}' style='width: #{percent}%')
+          div.progress(data-toggle='tooltip' data-placement='top' title='#{commited} mo. (#{percent}%) Commited')
+              div.progress-bar(role='progressbar' aria-valuenow='#{commitedmo}' aria-valuemin='0' aria-valuemax='#{estimatedmo}' style='width: #{percent}%')
                 span.sr-only #{percent} %
+          p.tinytext
+            span.pull-left 0 mo.
+            span.pull-right= (estimatedmo / (40 * 4)) 
+                |   mo.
           if (userInfo.isDeveloper)
             if (devVote != undefined)
               p
@@ -70,6 +72,7 @@ block ideaDeveloper
                        div.form-group
                          button.btn.btn-primary(type='submit') Submit
           if (commitedDevs != undefined)
+            br
             hr
             p 
               span.bold Commited developers
