@@ -321,14 +321,17 @@ router.get('/:ideaId', function(req, res, next) {
 
 router.put('/:ideaId', function(req, res, next) {
     var ideaId = req.params.ideaId;
-    var category = req.body.category;
-    if (!category) {
-	throw new Error('Category not specified');
+    var patch = {};
+    if (req.body.category) {
+	patch.category = req.body.category;
+    }
+    if (req.body.description) {
+	patch.description = req.body.description;
     }
 
     VerifyOwnerPromise(res.locals.user, ideaId, res).then(function(userId) {
 	return sql.SimpleQueryPromise(
-	    'UPDATE ideas SET category=? WHERE id=?', [category, ideaId]);
+	    'UPDATE ideas SET ? WHERE id=?', [patch, ideaId]);
     }).then(function() {
 	// Success.  Return an empty HTTP 200.
 	res.send('');

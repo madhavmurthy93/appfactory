@@ -20,7 +20,22 @@ var submitEditCategory = function(ideaId) {
     var newCategory = $("#chosenCategory")[0].value;
 
     var params = "category=" + newCategory;
+    sendIdeaUpdate(params, ideaId);
+}
 
+var toggleEditDescription = function() {
+    $("#description").hide();
+    $("#editDescription").show();
+}
+
+var submitEditDescription = function(ideaId) {
+    var newDescription = $("#newDescription")[0].value;
+
+    var params = "description=" + newDescription;
+    sendIdeaUpdate(params, ideaId);
+}
+
+var sendIdeaUpdate = function(params, ideaId) {
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.open('PUT', '/idea/' + ideaId, true);
     xmlhttp.addEventListener("load", function() {

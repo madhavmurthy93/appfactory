@@ -28,6 +28,22 @@ mixin Category
           button.btn.btn-primary(onClick="submitEditCategory(" + idea.id + ")") Submit
 
 
+mixin Description
+  h4.bold Description
+  p#description= idea.description
+    if (isOwner)
+      br
+      button.btn.btn-default#description(type='button'
+        onClick="toggleEditDescription()") Edit
+  if (isOwner)
+    span#editDescription(style="display: none")
+      div.form-group
+        textarea#newDescription(rows='5' cols='60')= idea.description
+        div.form-group
+          button.btn.btn-primary(
+            onClick="submitEditDescription(" + idea.id + ")") Submit
+
+
 block content
   script(src='/javascripts/ideaDetail.js').
 
@@ -91,6 +107,5 @@ block content
                 img#profilepic(src='#{idea.userPic}' alt='profile pic')   
                 |   #{idea.ownername} on #{idea.created_at}
             +Category
-            h4.bold Description
-            p #{idea.description}
+            +Description
         block comments
