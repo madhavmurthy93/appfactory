@@ -11,16 +11,17 @@ block ideaDeveloper
           else
             - var percent = 0
             - var commited = 0
-          p.manmo(data-toggle='tooltip' data-placement='top' title='Months taken to complete project assuming only 1 developer is working 40 hrs/week.')
-            span.bold Avg. estimated man months
-            span.badge.pull-right= (estimatedmo / (40 * 4))
+          p.manmo(data-toggle='tooltip' data-placement='top' title='Average months taken to complete project assuming only 1 developer is working 40 hrs/week.')
+            span.bold Estimated man months
+            span.badge.pull-right= (estimatedmo / (40 * 4)).toFixed(1)
           div.progress(data-toggle='tooltip' data-placement='top' title='#{commited} mo. (#{percent}%) Commited')
               div.progress-bar(role='progressbar' aria-valuenow='#{commitedmo}' aria-valuemin='0' aria-valuemax='#{estimatedmo}' style='width: #{percent}%')
                 span.sr-only #{percent} %
           p.tinytext
             span.pull-left 0 mo.
-            span.pull-right= (estimatedmo / (40 * 4)) 
+            span.pull-right= (estimatedmo / (40 * 4)).toFixed(1) 
                 |   mo.
+          br
           if (userInfo.isDeveloper)
             if (devVote != undefined)
               p
