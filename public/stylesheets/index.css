@@ -54,6 +54,11 @@
 }
 
 .description {
-	height: 80px;
+	height: 60px;
+	overflow: hidden;
+}
+
+.ideatitle {
+	height: 18px;
 	overflow: hidden;
 }
