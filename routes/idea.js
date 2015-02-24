@@ -187,6 +187,7 @@ router.get('/:ideaId', function(req, res) {
     var estimatedmo = 0;
     var commitedmo = 0;
     var totalDollarVotes = 0;
+    var commitedDevs = undefined;
     var rejectionVotes;
     if (res.locals.user) {
 	userId = res.locals.user.id;
@@ -289,6 +290,16 @@ router.get('/:ideaId', function(req, res) {
 		if (rows.length == 1) {
 			commitedmo = rows[0].commitedmo;
 		}
+
+		return sql.SimpleQueryPromise(
+			'SELECT users.name, users.profile_pic_url FROM '
+			+ 'users, developer_votes '
+			+ 'WHERE users.id = developer_votes.user AND developer_votes.idea=? '
+			+ 'AND developer_votes.available_time_per_week > 0', [ideaId]);
+	}).then(function(rows) {
+		if (rows.length > 0) {
+			commitedDevs = rows;
+		}
 	    // Check if the current user is a developer.
 	    return sql.SimpleQueryPromise(
 		'SELECT is_developer FROM users WHERE id=?', [userId || -1]);
@@ -309,7 +320,8 @@ router.get('/:ideaId', function(req, res) {
 		totalDollarVotes: totalDollarVotes,
 		devVote: devVote,
 		estimatedmo: estimatedmo,
-		commitedmo: commitedmo
+		commitedmo: commitedmo,
+		commitedDevs: commitedDevs
 	    });
 	}).catch(function(err) {
 	    console.log(err);

@@ -68,3 +68,12 @@ block ideaDeveloper
                            span.input-group-addon weeks
                        div.form-group
                          button.btn.btn-primary(type='submit') Submit
+          if (commitedDevs != undefined)
+            hr
+            p 
+              span.bold Commited developers
+            ul.list-group
+              each dev in commitedDevs
+                li.list-group-item
+                  img#profilepic(src='#{dev.profile_pic_url}' alt='profile pic') 
+                  |   #{dev.name}
