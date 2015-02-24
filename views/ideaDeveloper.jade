@@ -11,7 +11,7 @@ block ideaDeveloper
           else
             - var percent = 0
             - var commited = 0
-          p.manmo(data-toggle='tooltip' data-placement='top' title='Average months taken to complete project assuming only 1 developer is working 40 hrs/week.')
+          p.manmo(data-toggle='tooltip' data-placement='top' title='Average months taken to complete project assuming only one developer is working 40 hrs/week.')
             span.bold Estimated man months
             span.badge.pull-right= (estimatedmo / (40 * 4)).toFixed(1)
           div.progress(data-toggle='tooltip' data-placement='top' title='#{commited} mo. (#{percent}%) Commited')
