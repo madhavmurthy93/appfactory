@@ -11,7 +11,7 @@ block voting
     div.panel-heading 
       p(style="margin-top: .5em") Dollar votes 
     div.panel-body
-      p 
+      p(data-toggle='tooltip' data-placement='top' title='Money committed if this idea begins development.') 
         span.bold Total Dollar Votes   
         span(style="background-color:#2FBA4F").badge.pull-right $ #{totalDollarVotes}
       if (rejectionVotes)
