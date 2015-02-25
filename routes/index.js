@@ -55,20 +55,38 @@ router.get('/', function(req, res, next) {
 	    ++ideaIter;
 	    ++votedIdeaIter;
 	}
-	
 	while (ideaIter < ideas.length) {
 	    ideas[ideaIter].dollarVotes = 0;
 	    ++ideaIter;
 	}
-	
+
+	//console.log('Ideas before sorting:',
+	//	    ideas.map(function(entry) {
+	//		return { id: entry.id, dollarVotes: entry.dollarVotes,
+	//			 created_at: entry.created_at} }));
+
+	// Sort the idea list.
 	if (sortBy == 'popular')
 	{
-		ideas.sort(function(a, b) { return a.dollarVotes < b.dollarVotes });
+		ideas.sort(function(a, b) {
+		    return b.dollarVotes - a.dollarVotes;
+		});
 	}
 	else if (sortBy == 'latest')
 	{
-		ideas.sort(function(a, b) { return a.created_at < b.created_at });
+		ideas.sort(function(a, b) {
+		    if (a.created_at < b.created_at)
+			return 1;
+		    if (a.created_at > b.created_at)
+			return -1;
+		    return 0;
+		});
 	}
+
+	//console.log('Ideas after sorting:',
+	//	    ideas.map(function(entry) {
+	//		return { id: entry.id, dollarVotes: entry.dollarVotes,
+	//			 created_at: entry.created_at} }));
 
 	return sql.SimpleQueryPromise(
 		'SELECT idea, COUNT(user) AS devs '
