@@ -60,34 +60,6 @@ router.get('/', function(req, res, next) {
 	    ++ideaIter;
 	}
 
-	//console.log('Ideas before sorting:',
-	//	    ideas.map(function(entry) {
-	//		return { id: entry.id, dollarVotes: entry.dollarVotes,
-	//			 created_at: entry.created_at} }));
-
-	// Sort the idea list.
-	if (sortBy == 'popular')
-	{
-		ideas.sort(function(a, b) {
-		    return b.dollarVotes - a.dollarVotes;
-		});
-	}
-	else if (sortBy == 'latest')
-	{
-		ideas.sort(function(a, b) {
-		    if (a.created_at < b.created_at)
-			return 1;
-		    if (a.created_at > b.created_at)
-			return -1;
-		    return 0;
-		});
-	}
-
-	//console.log('Ideas after sorting:',
-	//	    ideas.map(function(entry) {
-	//		return { id: entry.id, dollarVotes: entry.dollarVotes,
-	//			 created_at: entry.created_at} }));
-
 	return sql.SimpleQueryPromise(
 		'SELECT idea, COUNT(user) AS devs '
 		+ 'FROM developer_votes '
@@ -111,6 +83,35 @@ router.get('/', function(req, res, next) {
 			ideas[ideaIter].devs = 0;
 			ideaIter += 1;
 		}
+
+	    //console.log('Ideas before sorting:',
+	    //	    ideas.map(function(entry) {
+	    //		return { id: entry.id, dollarVotes: entry.dollarVotes,
+	    //			 created_at: entry.created_at} }));
+
+	    // Sort the idea list.
+	    if (sortBy == 'popular')
+	    {
+		ideas.sort(function(a, b) {
+		    return b.dollarVotes - a.dollarVotes;
+		});
+	    }
+	    else if (sortBy == 'latest')
+	    {
+		ideas.sort(function(a, b) {
+		    if (a.created_at < b.created_at)
+			return 1;
+		    if (a.created_at > b.created_at)
+			return -1;
+		    return 0;
+		});
+	    }
+
+	    //console.log('Ideas after sorting:',
+	    //	    ideas.map(function(entry) {
+	    //		return { id: entry.id, dollarVotes: entry.dollarVotes,
+	    //			 created_at: entry.created_at} }));
+
 	// Grab the list of all categories.  Also count how many ideas there
 	// are in each category.  The left outer join here ensures that we
 	// list all categories even if there are no items in the category.
