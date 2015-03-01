@@ -50,15 +50,11 @@ block content
 									img.thumbnail-img(src='/idea/thumbs/' + idea.id, alt='idea_image')
 								div.caption
 									h4.ideatitle 
-										span.bold #{idea.name}
+										span.bold= idea.name
 									p.light.description= idea.description
 									div.caption-footer
-										div.pull-left
+										div.center-block
 											p
 												span.badge(style="background-color:#2FBA4F") $ #{idea.dollarVotes}
-											p.smalltext Dollar votes
-										div.pull-right.addmargin
-											p
-												span.badge(style="background-color:#2FBA4F") #{idea.devs}
-											p.smalltext Devs commited
+											p.smalltext Pledged
 					- n++

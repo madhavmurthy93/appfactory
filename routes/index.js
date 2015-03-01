@@ -9,14 +9,11 @@ router.get('/', function(req, res, next) {
     var filter = req.query.filter;
     var sortBy = req.query.sortBy || 'latest';
     
-    console.log('sortBy:' + sortBy);
-    		
     // Get the list of ideas and names of owners.  The query and parameters
     // need to change based on whether we're filtering the results by category
     // or not.
     var queryFilter = ''
     var queryParams = []
-    console.log('Filter is:', filter);
     if (filter) {
 	queryFilter = 'AND idea.category=? ';
 	queryParams = [filter];
