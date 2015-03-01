@@ -1,0 +1,15 @@
+extends layout
+
+block content
+  h1 Lucky you, you're an administrator.
+
+  if contactUsEmails.length > 0
+    h2 Contact Us entries:
+    ul
+      for item in contactUsEmails
+        li
+          span= item.comment
+          span.bold(style="margin-left: 1em")= item.name
+          if item.email
+            span(style="font-style: italic")
+              | < #{item.email} >

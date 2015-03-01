@@ -38,7 +38,7 @@ router.get('/', function(req, res, next) {
 // Find an unused ID from the given table and return it.  This returns
 // a promise that will provide the next available ID.
 var GetNextAvailableId = function(table) {
-    return sql.SimpleQueryPromise(
+     return sql.SimpleQueryPromise(
 	'SELECT id FROM ' + table + ' ORDER BY id DESC LIMIT 1')
 	.then(function(rows) {
 	    return new Promise(function(resolve, reject) {
