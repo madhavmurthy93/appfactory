@@ -38,7 +38,7 @@ router.get('/', function(req, res, next) {
 // Find an unused ID from the given table and return it.  This returns
 // a promise that will provide the next available ID.
 var GetNextAvailableId = function(table) {
-    return sql.SimpleQueryPromise(
+     return sql.SimpleQueryPromise(
 	'SELECT id FROM ' + table + ' ORDER BY id DESC LIMIT 1')
 	.then(function(rows) {
 	    return new Promise(function(resolve, reject) {
@@ -156,7 +156,6 @@ router.get('/thumbs/:ideaId', function(req, res, next) {
 		res.writeHead(200, {'Content-Type': 'image/jpg'});
 		res.end(rows[0].thumbnail, 'binary');
 	    } else {
-		console.log('No thumbnail for', ideaId);
 		var readStream = fs.createReadStream(
 		    './public/images/no_image.gif');
 		readStream.pipe(res);
@@ -175,7 +174,7 @@ router.get('/:ideaId', function(req, res, next) {
     var isDeveloper = false;
     var userId=-1;
     var vote = undefined;
-    var devVote = undefined;
+    var devVote = {};
     var estimatedmo = 0;
     var commitedmo = 0;
     var totalDollarVotes = 0;

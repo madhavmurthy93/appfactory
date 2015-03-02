@@ -9,14 +9,11 @@ router.get('/', function(req, res, next) {
     var filter = req.query.filter;
     var sortBy = req.query.sortBy || 'latest';
     
-    console.log('sortBy:' + sortBy);
-    		
     // Get the list of ideas and names of owners.  The query and parameters
     // need to change based on whether we're filtering the results by category
     // or not.
     var queryFilter = ''
     var queryParams = []
-    console.log('Filter is:', filter);
     if (filter) {
 	queryFilter = 'AND idea.category=? ';
 	queryParams = [filter];
@@ -55,7 +52,6 @@ router.get('/', function(req, res, next) {
 	    ++ideaIter;
 	    ++votedIdeaIter;
 	}
-	
 	while (ideaIter < ideas.length) {
 	    ideas[ideaIter].dollarVotes = 0;
 	    ++ideaIter;
@@ -85,14 +81,34 @@ router.get('/', function(req, res, next) {
 			ideaIter += 1;
 		}
 
-		if (sortBy == 'popular')
-		{
-			ideas.sort(function(a, b) { return a.dollarVotes < b.dollarVotes });
-		}
-		else if (sortBy == 'latest')
-		{
-			ideas.sort(function(a, b) { return a.created_at < b.created_at });
-		}
+	    //console.log('Ideas before sorting:',
+	    //	    ideas.map(function(entry) {
+	    //		return { id: entry.id, dollarVotes: entry.dollarVotes,
+	    //			 created_at: entry.created_at} }));
+
+	    // Sort the idea list.
+	    if (sortBy == 'popular')
+	    {
+		ideas.sort(function(a, b) {
+		    return b.dollarVotes - a.dollarVotes;
+		});
+	    }
+	    else if (sortBy == 'latest')
+	    {
+		ideas.sort(function(a, b) {
+		    if (a.created_at < b.created_at)
+			return 1;
+		    if (a.created_at > b.created_at)
+			return -1;
+		    return 0;
+		});
+	    }
+
+	    //console.log('Ideas after sorting:',
+	    //	    ideas.map(function(entry) {
+	    //		return { id: entry.id, dollarVotes: entry.dollarVotes,
+	    //			 created_at: entry.created_at} }));
+
 	// Grab the list of all categories.  Also count how many ideas there
 	// are in each category.  The left outer join here ensures that we
 	// list all categories even if there are no items in the category.

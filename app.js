@@ -8,6 +8,7 @@ var session = require('express-session');
 var passport = require('passport');
 
 var about = require('./routes/about');
+var admin = require('./routes/admin');
 var auth = require('./routes/auth');
 var idea = require('./routes/idea');
 var index = require('./routes/index');
@@ -48,6 +49,7 @@ app.use(function(req, res, next) {
 
 app.use('/', index);
 app.use('/about', about);
+app.use('/admin', admin);
 app.use('/auth', auth);
 app.use('/idea', idea);
 app.use('/profile', profile);

@@ -9,11 +9,10 @@ block voting
       | to vote
   div.panel.panel-default
     div.panel-heading 
-      p(style="margin-top: .5em") Dollar votes 
-    div.panel-body
-      p(data-toggle='tooltip' data-placement='top' title='Money committed if this idea begins development.') 
-        span.bold Total Dollar Votes   
+      p(style="margin-top: .5em") Pledged Money
         span(style="background-color:#2FBA4F").badge.pull-right $ #{totalDollarVotes}
+      p(data-toggle='tooltip' data-placement='top' title='Money committed once the prototype is built.') 
+    div.panel-body
       if (rejectionVotes)
         p 
           span.bold Negative votes
@@ -29,28 +28,28 @@ block voting
               span.badge.pull-right #{rejectionVotes[-3]}
       if (isLoggedIn)
         if (userVote != undefined)
-          p
-            span.bold You voted
-          ul.list-group
-            if (userVote == -1)
-              li.list-group-item Don't think it will succeed
-            else if (userVote == -2)
-              li.list-group-item Too difficult to implement
-            else if (userVote == -3)
-              li.list-group-item Dislike it for another reason 
-            else
-              li.list-group-item Dollar votes 
-                span.badge.pull-right $ #{userVote}
-           - var voteHeader='Change vote'
+          if (userVote < 0)
+            - var removeHeader='Remove vote'
+            p
+              span.bold You voted
+            ul.list-group
+              if (userVote == -1)
+                li.list-group-item Don't think it will succeed
+              else if (userVote == -2)
+                li.list-group-item Too difficult to implement
+              else if (userVote == -3)
+                li.list-group-item Dislike it for another reason 
+          else
+            - var removeHeader='Remove pledge'
+            li.list-group-item Pledged money
+              span.badge.pull-right $ #{userVote}
           div.btn-group(role='group')
             form(action='/idea/' + idea.id + '/vote' method='post')
               div.form-group
-                button.btn.btn-primary#first-button(type='submit' name='vote'
-                                       value='0') Remove Vote
-            button.btn.btn-primary(type='button' data-toggle='modal' data-target='#dvmodal')= voteHeader
+                button.btn.btn-primary(type='submit' name='vote'
+                                       value='0')= removeHeader
         else
-          - var voteHeader='Cast vote'
-          button.btn.btn-primary(type='button' data-toggle='modal' data-target='#dvmodal')= voteHeader
+          button.btn.btn-primary(type='button' data-toggle='modal' data-target='#dvmodal') Pledge or Dislike
 
         div.modal.fade.bs-example-modal-sm#dvmodal(tabindex='-1' role='dialog' aria-labelledby='modallabel' aria-hidden='true')
           div.modal-dialog.modal-sm
@@ -58,30 +57,30 @@ block voting
               div.modal-header
                 button.close(type='button' data-dismiss='modal' aria-label='close')
                   span(aria-hidden='true') &times;
-                h4.modal-title#modallabel= voteHeader
+                h4.modal-title#modallabel Pledge or Dislike
               div.modal-body
                 div(role="tabpanel")
                   if (userVote != undefined)
                     if (userVote > 0)
-                      - var likeclass = 'active'
+                      - var pledgeclass = 'active'
                       - var dislikeclass = ''
                       - var vote = userVote
                     else
-                      - var likeclass = ''
+                      - var pledgeclass = ''
                       - var dislikeclass = 'active'
                   else
-                    - var likeclass = 'active'
+                    - var pledgeclass = 'active'
                     - var dislikeclass = ''
                   ul(class="nav nav-tabs" role="tablist")
-                    li(role="presentation" class="#{likeclass}") <a href="#like" aria-controls="like" role="tab" data-toggle="tab">Like</a>
+                    li(role="presentation" class="#{pledgeclass}") <a href="#pledge" aria-controls="pledge" role="tab" data-toggle="tab">Pledge</a>
                     li(role="presentation" class='#{dislikeclass}') <a href="#dislike" aria-controls="dislike" role="tab" data-toggle="tab">Dislike</a>
 
                 div(class="tab-content")
-                  div(role="tabpanel" class="tab-pane #{likeclass}" id="like")
+                  div(role="tabpanel" class="tab-pane #{pledgeclass}" id="pledge")
                     form(action='/idea/' + idea.id + '/vote' method='post')
                       div.form-group
-                        label(for='vote') Dollar vote
-                        p How much money would you commit if this idea begins development?
+                        label(for='vote') Pledge amount
+                        p How much money will you commit for the development of this app if it reaches the prototype stage?
                         div.input-group
                           span.input-group-addon $
                           input.form-control#dollarVote(
@@ -110,3 +109,29 @@ block voting
                             option(value='-3') Some other reason
                       div.form-group
                         button.btn.btn-primary(type='submit') Submit
+    ul.list-group
+      h2.reward-title Rewards
+      li.list-group-item
+        span.badge.pull-left $5
+        span.reward-desc Thank you from developers
+      li.list-group-item
+        span.badge.pull-left $10
+        span.reward-desc Your name in the credits
+      li.list-group-item
+        span.badge.pull-left $25
+        span.reward-desc T-shirt with app logo
+      li.list-group-item
+        span.badge.pull-left $50
+        span.reward-desc T-shirt + mug with app logo
+      li.list-group-item
+        span.badge.pull-left $100
+        span.reward-desc 3D printed app logo
+      li.list-group-item
+        span.badge.pull-left $250
+        span.reward-desc Poster signed by development team
+      li.list-group-item
+        span.badge.pull-left $500
+        span.reward-desc Interview with developers
+      li.list-group-item
+        span.badge.pull-left $1000
+        span.reward-desc Customized addition to the app (TBD with developers)
