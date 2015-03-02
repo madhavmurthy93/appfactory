@@ -11,6 +11,9 @@ router.get('/', function(req, res, next) {
     res.render('profile');
 });
 
+router.get('/demo', function(req, res, next) {
+	res.render('profiledemo');
+});
 
 // Set whether the user is a developer or not.
 router.post('/setDeveloper', function(req, res, next) {
