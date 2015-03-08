@@ -11,9 +11,41 @@ router.get('/', function(req, res, next) {
     res.render('profile');
 });
 
+
+// Browse developers page.
+router.get('/browse', function(req, res, next) {
+    devs = [];
+    sql.SimpleQueryPromise('SELECT id, name, description, '
+			   + '  profile_pic_url, avg_rating '
+			   + 'FROM users WHERE is_developer=true')
+	.then(function(rows) {
+	    devs = rows;
+	    return sql.SimpleQueryPromise(
+		'SELECT id, specialty, experience FROM developer_specialties '
+		    + 'ORDER BY experience DESC');
+	}).then(function(rows) {
+	    // Merge specialities...
+	    rows.forEach(function(specialty) {
+		// Find the user...
+		devs.forEach(function(devEntry) {
+		    if (specialty.id == devEntry.id) {
+			if (!devEntry.specialties) {
+			    devEntry.specialties = [];
+			}
+			devEntry.specialties.push(specialty);
+		    }
+		});
+	    });
+		
+	    res.render('profilebrowse', {devs: devs});
+	}).catch(next);
+});
+
+
 router.get('/demo', function(req, res, next) {
 	res.render('profiledemo');
 });
+
 
 // Set whether the user is a developer or not.
 router.post('/setDeveloper', function(req, res, next) {
