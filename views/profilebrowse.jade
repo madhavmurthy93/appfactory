@@ -1,7 +1,8 @@
 extends layout
-block header
-  link(rel='stylesheet', href='/stylesheets/index.css')
+
 block content
+  script(src='/javascripts/profilebrowse.js').
+
   div.container
     div.panel.panel-default
       div.panel-heading
@@ -9,8 +10,15 @@ block content
       div.panel-body
         for specialty in specialties
           div.col-md-2
-            input(type="checkbox" name=specialty)
-            label(for=specialty)= specialty
+            if specialty.checked
+              input.filter-input(type="checkbox" name=specialty.name
+                                 id=specialty.name checked
+                                 onClick="clickFilter('" + specialty.name + "')")
+            else
+              input.filter-input(type="checkbox" name=specialty.name
+                                 id=specialty.name
+                                 onClick="clickFilter('" + specialty.name + "')")
+            label(for=specialty.name)= specialty.name
 
   div.container
     ul.list-group
