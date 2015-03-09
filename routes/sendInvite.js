@@ -7,7 +7,11 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/inviteSent', function(req, res, next) {
-	res.render('inviteSent');
+	res.render('inviteSentMockup');
+});
+
+router.get('/accepted', function(req, res, next) {
+	res.render('inviteAcceptedMockup');
 });
 
 module.exports = router;

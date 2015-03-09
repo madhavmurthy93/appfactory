@@ -11,7 +11,8 @@ block content
 								div.list-group-item(style='background-color: #b0c5de')
 									a(href='/profile/garrett')
 										img#profilepic(src='/images/garrett_pic.jpg' alt='profile pic')
-										span.bold   Garrett Halls
+										span.bold   Garrett Halls 
+										span.pull-right.badge(style="background-color:#2FBA4F") new
 									p.bold Invitation to join MobiMockup
 								div.list-group-item
 									a(href='#')
@@ -43,3 +44,11 @@ block content
 											p
 											p Cheers!
 											p Garrett
+									div.row
+										div.col-md-8
+											p
+											div.form-group
+												div.col-sm-offset-0.col-sm-10
+													a(href="/sendInvite/accepted") 
+														button.btn.btn-primary(type='submit' style="background-color:#2FBA4F") Accept
+													button.btn.btn-primary(type='submit' style="background-color:#FF0000") Reject
