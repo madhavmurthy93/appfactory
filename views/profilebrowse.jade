@@ -28,10 +28,16 @@ block content
         li.list-group-item
           if (dev.name == 'Madhav Murthy')
             a(href='/profile/madhav')
-          else if(dev.name == 'Garrett Halls')
+              img#profilepic(src='#{dev.profile_pic_url}' alt='profile pic') 
+              span.bold(style='margin-left: 0.5em')= dev.name
+          else if (dev.name == 'Garrett Halls')
             a(href='/profile/garrett')
-            img#profilepic(src='#{dev.profile_pic_url}' alt='profile pic') 
-            span.bold(style='margin-left: 0.5em')= dev.name
+              img#profilepic(src='#{dev.profile_pic_url}' alt='profile pic') 
+              span.bold(style='margin-left: 0.5em')= dev.name
+          else
+            a(href='#')
+              img#profilepic(src='#{dev.profile_pic_url}' alt='profile pic') 
+              span.bold(style='margin-left: 0.5em')= dev.name
           span : Peer Rating 
             span(style='color:gold')
               - for (i=0; i < 5; i++)
