@@ -26,7 +26,10 @@ block content
         h3.panel-title.bold Developers
       for dev in devs
         li.list-group-item
-          a(href='/profile/demo')
+          if (dev.name == 'Madhav Murthy')
+            a(href='/profile/madhav')
+          else if(dev.name == 'Garrett Halls')
+            a(href='/profile/garrett')
             img#profilepic(src='#{dev.profile_pic_url}' alt='profile pic') 
             span.bold(style='margin-left: 0.5em')= dev.name
           span : Peer Rating 
