@@ -3,35 +3,36 @@ block header
   link(rel='stylesheet', href='/stylesheets/index.css')
 block content
   div.container
-    div.row
-      p.lead Developers
-    for dev in devs
-      div.row
-        a(href='/profile/demo')
-          img#profilepic(src='#{dev.profile_pic_url}' alt='profile pic') 
-          span.bold= dev.name
-        span : Peer Rating 
-          span(style='color:gold')
-            - for (i=0; i < 5; i++)
-              - if (dev.avg_rating > i + 0.5)
-                i.fa.fa-star
-              - else if (dev.avg_rating > i)
-                i.fa.fa-star-half-o 
-              - else
-                i.fa.fa-star-o
-        p
-          if dev.specialties
-            - n = 0
-            for specialty in dev.specialties
-              - n += 1
-              if n <= 3
-                span(style='margin-right: 1em') #{specialty.specialty}: 
-                  span(style='color: gold')
-                    - for (i=0; i < 5; i++)
-                      - if (specialty.experience > i + 0.5)
-                        i.fa.fa-star
-                      - else if (specialty.experience > i)
-                        i.fa.fa-star-half-o 
-                      - else
-                        i.fa.fa-star-o
+    ul.list-group
+      li.list-group-item.active Developers
+      for dev in devs
+        li.list-group-item
+          a(href='/profile/demo')
+            img#profilepic(src='#{dev.profile_pic_url}' alt='profile pic') 
+            span.bold(style='margin-left: 0.5em')= dev.name
+          span : Peer Rating 
+            span(style='color:gold')
+              - for (i=0; i < 5; i++)
+                - if (dev.avg_rating > i + 0.5)
+                  i.fa.fa-star
+                - else if (dev.avg_rating > i)
+                  i.fa.fa-star-half-o 
+                - else
+                  i.fa.fa-star-o
+          p
+            if dev.specialties
+              span.bold Specialties: 
+              - n = 0
+              for specialty in dev.specialties
+                - n += 1
+                if n <= 3
+                  span(style='margin-right: 1em') #{specialty.specialty}: 
+                    span(style='color: gold')
+                      - for (i=0; i < 5; i++)
+                        - if (specialty.experience > i + 0.5)
+                          i.fa.fa-star
+                        - else if (specialty.experience > i)
+                          i.fa.fa-star-half-o 
+                        - else
+                          i.fa.fa-star-o
 
