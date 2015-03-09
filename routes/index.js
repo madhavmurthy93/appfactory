@@ -7,7 +7,7 @@ var sql = require('../util/sql');
 router.get('/', function(req, res, next) {
     var ideas;
     var filter = req.query.filter;
-    var sortBy = req.query.sortBy || 'latest';
+    var sortBy = req.query.sortBy || 'popular';
     
     // Get the list of ideas and names of owners.  The query and parameters
     // need to change based on whether we're filtering the results by category
