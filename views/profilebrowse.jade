@@ -3,9 +3,19 @@ block header
   link(rel='stylesheet', href='/stylesheets/index.css')
 block content
   div.container
+    div.panel.panel-default
+      div.panel-heading
+        h3.panel-title Filters
+      div.panel-body
+        for specialty in specialties
+          div.col-md-2
+            input(type="checkbox" name=specialty)
+            label(for=specialty)= specialty
+
+  div.container
     ul.list-group
       li.list-group-item
-        span.lead.bold Developers
+        h3.panel-title.bold Developers
       for dev in devs
         li.list-group-item
           a(href='/profile/demo')

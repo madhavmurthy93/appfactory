@@ -15,6 +15,7 @@ router.get('/', function(req, res, next) {
 // Browse developers page.
 router.get('/browse', function(req, res, next) {
     devs = [];
+    specialties = [];
     sql.SimpleQueryPromise('SELECT id, name, description, '
 			   + '  profile_pic_url, avg_rating '
 			   + 'FROM users WHERE is_developer=true '
@@ -27,6 +28,11 @@ router.get('/browse', function(req, res, next) {
 	}).then(function(rows) {
 	    // Merge specialities...
 	    rows.forEach(function(specialty) {
+		// And track a list of the names of all specialties.
+		if (specialties.indexOf(specialty.specialty) == -1) {
+		    specialties.push(specialty.specialty);
+		}
+
 		// Find the user...
 		devs.forEach(function(devEntry) {
 		    if (specialty.id == devEntry.id) {
@@ -37,8 +43,9 @@ router.get('/browse', function(req, res, next) {
 		    }
 		});
 	    });
+	    specialties.sort();
 		
-	    res.render('profilebrowse', {devs: devs});
+	    res.render('profilebrowse', {devs: devs, specialties: specialties});
 	}).catch(next);
 });
 
