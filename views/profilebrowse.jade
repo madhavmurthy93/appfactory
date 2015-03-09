@@ -4,7 +4,8 @@ block header
 block content
   div.container
     ul.list-group
-      li.list-group-item.active Developers
+      li.list-group-item
+        span.lead.bold Developers
       for dev in devs
         li.list-group-item
           a(href='/profile/demo')
