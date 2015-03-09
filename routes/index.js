@@ -7,7 +7,7 @@ var sql = require('../util/sql');
 router.get('/', function(req, res, next) {
     var ideas;
     var filter = req.query.filter;
-    var sortBy = req.query.sortBy || 'latest';
+    var sortBy = req.query.sortBy || 'popular';
     
     // Get the list of ideas and names of owners.  The query and parameters
     // need to change based on whether we're filtering the results by category
@@ -139,9 +139,9 @@ router.get('/fake:fakeId', function(req, res, next) {
 	0: 'WelcomeToProject.png',
 	1: 'roadmap_mock.jpg',
 	2: 'FakeSourceRepository.png',
-	3: 'AppFactorySlide.jpg'
+	3: 'AppTogetherSlide.jpg'
     };
-    var imageName = fakeIdMap[fakeId] || 'AppFactorySlide.jpg'
+    var imageName = fakeIdMap[fakeId] || 'AppTogetherSlide.jpg'
 
     res.send('<html><body><a href="fake' + (fakeId + 1)
 	     + '"><img src="images/' + imageName + '"></a>'

@@ -1,7 +1,7 @@
 doctype html
 html
 	head
-		title AppFactory
+		title AppTogether
 		link(rel='stylesheet', href='/bootstrap/css/bootstrap.min.css')
 		link(rel='stylesheet', href='/stylesheets/style.css')
 		link(href='https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css' rel='stylesheet' type='text/css')
@@ -24,12 +24,14 @@ html
 						span.icon-bar
 						span.icon-bar
 						span.icon-bar
-					a.navbar-brand(href='/') AppFactory
+					a.navbar-brand(href='/') AppTogether
 
 				div.collapse.navbar-collapse#bs-example-navbar-collapse-1
 					ul.nav.navbar-nav
 						li
 							a(href='/idea') Submit Idea
+						li
+							a(href='/profile/browse') Build Team
 						li
 							a(href='/about') About
 					ul.nav.navbar-nav.navbar-right
@@ -42,4 +44,9 @@ html
 								a(href='/auth/facebook')
 									i.fa.fa-facebook-official
 									|  Login 
+						li
+							if locals.user
+								a(href='/profile') 
+									img#profilepic(src='/images/messages_icon.jpg' alt='profile pic')
+									|  Messages 
 	block content

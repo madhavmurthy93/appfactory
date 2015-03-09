@@ -1,0 +1,57 @@
+extends layout
+
+block content
+  script(src='/javascripts/profilebrowse.js').
+
+  div.container
+    div.panel.panel-default
+      div.panel-heading
+        h3.panel-title Filters
+      div.panel-body
+        for specialty in specialties
+          div.col-md-2
+            if specialty.checked
+              input.filter-input(type="checkbox" name=specialty.name
+                                 id=specialty.name checked
+                                 onClick="clickFilter('" + specialty.name + "')")
+            else
+              input.filter-input(type="checkbox" name=specialty.name
+                                 id=specialty.name
+                                 onClick="clickFilter('" + specialty.name + "')")
+            label(for=specialty.name)= specialty.name
+
+  div.container
+    ul.list-group
+      li.list-group-item
+        h3.panel-title.bold Developers
+      for dev in devs
+        li.list-group-item
+          a(href='/profile/demo')
+            img#profilepic(src='#{dev.profile_pic_url}' alt='profile pic') 
+            span.bold(style='margin-left: 0.5em')= dev.name
+          span : Peer Rating 
+            span(style='color:gold')
+              - for (i=0; i < 5; i++)
+                - if (dev.avg_rating > i + 0.5)
+                  i.fa.fa-star
+                - else if (dev.avg_rating > i)
+                  i.fa.fa-star-half-o 
+                - else
+                  i.fa.fa-star-o
+          p
+            if dev.specialties
+              span.bold Specialties: 
+              - n = 0
+              for specialty in dev.specialties
+                - n += 1
+                if n <= 3
+                  span(style='margin-right: 1em') #{specialty.specialty}: 
+                    span(style='color: gold')
+                      - for (i=0; i < 5; i++)
+                        - if (specialty.experience > i + 0.5)
+                          i.fa.fa-star
+                        - else if (specialty.experience > i)
+                          i.fa.fa-star-half-o 
+                        - else
+                          i.fa.fa-star-o
+
