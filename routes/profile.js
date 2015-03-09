@@ -11,8 +11,12 @@ router.get('/', function(req, res, next) {
     res.render('profile');
 });
 
-router.get('/demo', function(req, res, next) {
-	res.render('profiledemo');
+router.get('/madhav', function(req, res, next) {
+	res.render('profilemadhav');
+});
+
+router.get('/garrett', function(req, res, next) {
+	res.render('profilegarrett');
 });
 
 // Set whether the user is a developer or not.
