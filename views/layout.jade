@@ -44,4 +44,9 @@ html
 								a(href='/auth/facebook')
 									i.fa.fa-facebook-official
 									|  Login 
+						li
+							if locals.user
+								a(href='/profile') 
+									img#profilepic(src='/images/messages_icon.jpg' alt='profile pic')
+									|  Messages 
 	block content
