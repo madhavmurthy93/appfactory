@@ -1,0 +1,36 @@
+extends layout
+
+block content
+		div.col-md-11
+			div.panel.panel-default
+				div.panel-body
+					div.row
+						div.col-md-8
+									div.row
+									p.bold Select Idea (optional):
+									p 
+									div(class="btn-group" role="group")
+										button(type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false") Mobi Mockup
+											span(class="caret")
+										ul(class="dropdown-menu" role="menu")
+											li
+												a(href="#") None
+											li
+												a(href="#") MobiMockup
+											li
+												a(href="#") BBSense
+									div.row
+									p
+									p.bold Message:
+									p 
+									div.form-group
+										label(for='comment' class='col-sm-0 control-label')
+										div.col-sm-12
+											textarea.form-control(rows='4' placeholder='I came across your profile and I am interested in working with you. I think we would make a great team! Check out the idea that I have posted and let me know if it interests you.' name='message')
+									div.row
+										div.col-md-8
+											p
+											div.form-group
+												div.col-sm-offset-0.col-sm-10
+													a(href="/sendInvite/inviteSent") 
+														button.btn.btn-primary(type='submit') Send Message

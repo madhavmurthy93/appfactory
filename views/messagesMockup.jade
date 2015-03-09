@@ -8,33 +8,47 @@ block content
 						h4.bold(style='margin-left: 15px') My Messages
 						div.col-md-3
 							div.list-group
-								div.list-group-item(style='background-color: #90c5de')
-									img#profilepic(src='/images/garrett_pic.jpg' alt='profile pic')
-									|   Garrett Halls
-									span.pull-right.badge new
+								div.list-group-item(style='background-color: #b0c5de')
+									a(href='/profile/garrett')
+										img#profilepic(src='/images/garrett_pic.jpg' alt='profile pic')
+										span.bold   Garrett Halls 
+										span.pull-right.badge(style="background-color:#2FBA4F") new
 									p.bold Invitation to join MobiMockup
 								div.list-group-item
-									img#profilepic(src='/images/kevin_pic.jpg' alt='profile pic')
-									|   Kevin Deus
+									a(href='#')
+										img#profilepic(src='/images/kevin_pic.jpg' alt='profile pic')
+										span.bold   Kevin Deus
 									p Kevin wants to work with you!
 								div.list-group-item
-									img#profilepic(src='/images/abhi_pic.jpg' alt='profile pic')
-									|   Abhishek Prateek
+									a(href='#')
+										img#profilepic(src='/images/abhi_pic.jpg' alt='profile pic')
+										span.bold   Abhishek Prateek
 									p Welcome to AppTogether!
 						div.col-md-8
-							div.panel.panel-default
-								div.panel-body
 									div.row
-										div.col-md-4
-											a.thumbnail(href='#' style='padding:0px;')
-												img(src='/images/appfactory.jpg' style='height:200px; width:auto;')
-										div.col-md-8
-											h5.bold AppTogether
-											p Online platform to bring ideators and developers together.
+									a(href='/profile/garrett')
+										img#profilepic(src='/images/garrett_pic.jpg' alt='profile pic')
+										span.bold   Garrett Halls   
+									| invited you to join his team for 
+									a(href='/idea/12')
+										MobiMockup MobiMockup
 									div.row
-										div.col-md-4
-											a.thumbnail(href='#' style='padding:0px;')
-												img(src='/images/chat.png' style='height:200px; width:auto;')
 										div.col-md-8
-											h5.bold NodeChat
-											p Session-based chat server and client built using node.js, socket.io and mongodb.
+											p
+											p Hey Madhav
+											p 
+												| I came across your profile and I am interested in working with you.
+												| I think we'd make a great team! Check out the idea that I have
+												| posted and let me know if it interests you.
+											p
+											p
+											p Cheers!
+											p Garrett
+									div.row
+										div.col-md-8
+											p
+											div.form-group
+												div.col-sm-offset-0.col-sm-10
+													a(href="/sendInvite/accepted") 
+														button.btn.btn-primary(type='submit' style="background-color:#2FBA4F") Accept
+													button.btn.btn-primary(type='submit' style="background-color:#FF0000") Reject

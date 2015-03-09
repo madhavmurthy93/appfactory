@@ -14,6 +14,7 @@ var idea = require('./routes/idea');
 var index = require('./routes/index');
 var profile = require('./routes/profile');
 var testdb = require('./routes/testdb');
+var sendInvite = require('./routes/sendInvite');
 
 var app = express();
 
@@ -54,6 +55,7 @@ app.use('/auth', auth);
 app.use('/idea', idea);
 app.use('/profile', profile);
 app.use('/testdb', testdb);
+app.use('/sendInvite', sendInvite);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
