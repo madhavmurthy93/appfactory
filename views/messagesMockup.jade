@@ -1,0 +1,40 @@
+extends layout
+
+block content
+		div.col-md-11
+			div.panel.panel-default
+				div.panel-body
+					div.row
+						h4.bold(style='margin-left: 15px') My Messages
+						div.col-md-3
+							div.list-group
+								div.list-group-item(style='background-color: #90c5de')
+									img#profilepic(src='/images/garrett_pic.jpg' alt='profile pic')
+									|   Garrett Halls
+									span.pull-right.badge new
+									p.bold Invitation to join MobiMockup
+								div.list-group-item
+									img#profilepic(src='/images/kevin_pic.jpg' alt='profile pic')
+									|   Kevin Deus
+									p Kevin wants to work with you!
+								div.list-group-item
+									img#profilepic(src='/images/abhi_pic.jpg' alt='profile pic')
+									|   Abhishek Prateek
+									p Welcome to AppTogether!
+						div.col-md-8
+							div.panel.panel-default
+								div.panel-body
+									div.row
+										div.col-md-4
+											a.thumbnail(href='#' style='padding:0px;')
+												img(src='/images/appfactory.jpg' style='height:200px; width:auto;')
+										div.col-md-8
+											h5.bold AppTogether
+											p Online platform to bring ideators and developers together.
+									div.row
+										div.col-md-4
+											a.thumbnail(href='#' style='padding:0px;')
+												img(src='/images/chat.png' style='height:200px; width:auto;')
+										div.col-md-8
+											h5.bold NodeChat
+											p Session-based chat server and client built using node.js, socket.io and mongodb.
