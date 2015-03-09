@@ -11,6 +11,13 @@ router.get('/', function(req, res, next) {
     res.render('profile');
 });
 
+router.get('/madhav', function(req, res, next) {
+	res.render('profilemadhav');
+});
+
+router.get('/garrett', function(req, res, next) {
+	res.render('profilegarrett');
+});
 
 // Browse developers page.
 router.get('/browse', function(req, res, next) {
@@ -85,11 +92,6 @@ router.get('/browse', function(req, res, next) {
 		
 	    res.render('profilebrowse', {devs: devs, specialties: specialties});
 	}).catch(next);
-});
-
-
-router.get('/demo', function(req, res, next) {
-	res.render('profiledemo');
 });
 
 router.get('/madhav/messages', function(req, res, next) {
