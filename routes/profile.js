@@ -17,7 +17,8 @@ router.get('/browse', function(req, res, next) {
     devs = [];
     sql.SimpleQueryPromise('SELECT id, name, description, '
 			   + '  profile_pic_url, avg_rating '
-			   + 'FROM users WHERE is_developer=true')
+			   + 'FROM users WHERE is_developer=true '
+			   + 'ORDER BY avg_rating DESC')
 	.then(function(rows) {
 	    devs = rows;
 	    return sql.SimpleQueryPromise(
