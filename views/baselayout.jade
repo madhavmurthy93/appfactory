@@ -1,0 +1,22 @@
+doctype html
+html
+	head
+		title AppTogether
+		link(rel='stylesheet', href='/bootstrap/css/bootstrap.min.css')
+		link(rel='stylesheet', href='/stylesheets/style.css')
+		link(href='https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css' rel='stylesheet' type='text/css')
+		link(href='https://fonts.googleapis.com/css?family=Open+Sans:300,400italic,700italic,400,700' rel='stylesheet' type='text/css')
+	block header
+	body
+		script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js').
+		script(src='/bootstrap/js/bootstrap.min.js').
+		nav.navbar.navbar-inverse.navbar-fixed-top(role='navigation')
+			if (!devenv)
+				//- Google Analytics
+				script().
+					(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+					ga('create', 'UA-59849073-1', 'auto');
+					ga('send', 'pageview');
+			div.container
+				block navbar
+	block content

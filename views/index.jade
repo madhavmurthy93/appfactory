@@ -11,7 +11,7 @@ block content
 							- var outFilter = ''
 							if (entry.category != 'All')
 								- outFilter = '?filter=' + encodeURIComponent(entry.category)
-							a.list-group-item(href='/' + outFilter,
+							a.list-group-item(href='/demo/' + outFilter,
 																class=groupClass)
 								span.bold= entry.category
 								if (entry.count)
@@ -30,24 +30,24 @@ block content
 			div.col-md-9
 				p.lead Sort   
 					if (sortBy == 'popular')
-						a(href='/?sortBy=latest')
+						a(href='/demo/?sortBy=latest')
 							button#latest(type="button" class="btn btn-default") Latest  
-						a(href='/?sortBy=popular')
+						a(href='/demo/?sortBy=popular')
 							button#popular(type="button" class="btn btn-default active") Popular
 					else
-						a(href='/?sortBy=latest')
+						a(href='/demo/?sortBy=latest')
 							button#latest(type="button" class="btn btn-default active") Latest  
-						a(href='/?sortBy=popular')
+						a(href='/demo/?sortBy=popular')
 							button#popular(type="button" class="btn btn-default") Popular
 				- var n = 0
 				each idea in ideas
 					if (n % 3 == 0)
 						div.row
-					a(href="/idea/" + idea.id)
+					a(href="/demo/idea/" + idea.id)
 						div.col-sm-4.col-md-4.col-lg-4
 							div.thumbnail
 								div.thumbnail-container
-									img.thumbnail-img(src='/idea/thumbs/' + idea.id, alt='idea_image')
+									img.thumbnail-img(src='/demo/idea/thumbs/' + idea.id, alt='idea_image')
 								div.caption
 									h4.ideatitle 
 										span.bold= idea.name

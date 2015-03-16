@@ -80,7 +80,7 @@ block content
               div.col-sm-4.col-md-4.col-lg-4
                 div.thumbnail
                   div.thumbnail-container
-                    img.thumbnail-img(src="/idea/thumbs/" + idea.id)
+                    img.thumbnail-img(src="/demo/idea/thumbs/" + idea.id)
                   +editPicture
               if (screenshotIds.length > 0)
                 each imageId in screenshotIds
@@ -90,11 +90,11 @@ block content
                   div.col-sm-4.col-md-4.col-lg-4
                     div.thumbnail
                       div.thumbnail-container
-                        a(href="/idea/" + idea.id + "/screens/" + imageId + ".jpg")
-                          img.thumbnail-img(src="/idea/" + idea.id + "/screenthumbs/" + imageId + ".jpg")
+                        a(href="/demo/idea/" + idea.id + "/screens/" + imageId + ".jpg")
+                          img.thumbnail-img(src="/demo/idea/" + idea.id + "/screenthumbs/" + imageId + ".jpg")
                       +editPicture
             if (isOwner)
-              form.form-horizontal(action='/idea/' + idea.id + '/screens' method='post' enctype='multipart/form-data')
+              form.form-horizontal(action='/demo/idea/' + idea.id + '/screens' method='post' enctype='multipart/form-data')
                 div.form-group
                   div.col-sm-10
                     input(type='file' name='screenshot' accept='image/*' required)

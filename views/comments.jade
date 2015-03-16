@@ -11,7 +11,7 @@ block comments
 						span.badge #{comment.votes}
 					p #{comment.contents}
 					
-		form.form-horizontal(action='/idea/' + idea.id + '/comment' method='post')
+		form.form-horizontal(action='/demo/idea/' + idea.id + '/comment' method='post')
 			div.form-group
 				div.col-sm-8
 					textarea.form-control(rows='4' placeholder='Comment' name='comment')

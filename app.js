@@ -15,6 +15,7 @@ var index = require('./routes/index');
 var profile = require('./routes/profile');
 var testdb = require('./routes/testdb');
 var sendInvite = require('./routes/sendInvite');
+var walkthrough = require('./routes/walkthrough');
 
 var app = express();
 
@@ -48,14 +49,15 @@ app.use(function(req, res, next) {
     next();
 });
 
-app.use('/', index);
-app.use('/about', about);
-app.use('/admin', admin);
-app.use('/auth', auth);
-app.use('/idea', idea);
-app.use('/profile', profile);
-app.use('/testdb', testdb);
-app.use('/sendInvite', sendInvite);
+app.use('/', walkthrough);
+app.use('/demo/', index);
+app.use('/demo/about', about);
+app.use('/demo/admin', admin);
+app.use('/demo/auth', auth);
+app.use('/demo/idea', idea);
+app.use('/demo/profile', profile);
+app.use('/demo/testdb', testdb);
+app.use('/demo/sendInvite', sendInvite);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

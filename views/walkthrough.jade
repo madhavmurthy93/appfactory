@@ -1,0 +1,46 @@
+extends baselayout
+
+block header
+  link(rel='stylesheet', href='/stylesheets/walkthrough.css')
+
+block navbar
+  div.navbar-header
+    a.navbar-brand(href='/') AppTogether
+
+block content
+  div.container
+    if header
+      h1= header
+
+    div
+      h1 Our Vision
+      p.bold 
+        | AppTogether is a platform to match idea creators with developers and designers 
+        | to create mobile apps. It enables free collaboration to transform ideas into reality. 
+        | For developers, AppTogether is a great way to work on exciting projects, build your reputation, 
+        | develop new skills and advance your career.
+
+    div
+      iframe(width="560" height="315" src="https://www.youtube.com/embed/WaDaAzUQl0s" frameborder="0" allowfullscreen)
+
+    div
+      h2 Interested in hearing more or being notified when the site goes live?
+      p.bold Please leave us your email and any comments or questions you have.
+
+    div
+      form.form-horizontal(action='/interested' method='post')
+        div.form-group
+          label(for='name' class='col-sm-2 control-label') Name
+          div.col-sm-10
+            input(type='text' class='form-control' name='name' placeholder='Name')
+        div.form-group
+          label(for='email' class='col-sm-2 control-label') Email
+          div.col-sm-10
+            input(type='email' class='form-control' name='email' placeholder='Email')
+        div.form-group
+          label(for='comment' class='col-sm-2 control-label') Comment
+          div.col-sm-10
+            textarea.form-control(rows='4' placeholder='Comment' name='comment')
+        div.form-group
+          div.col-sm-offset-2.col-sm-10
+            button.btn.btn-primary(type='submit') Submit

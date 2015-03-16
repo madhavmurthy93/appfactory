@@ -3,7 +3,7 @@ extends ideaDetail
 block voting
   if (!isLoggedIn)
     h4.bold
-      a(href='/auth/facebook')
+      a(href='/demo/auth/facebook')
         i.fa.fa-facebook-official
         |  Login 
       | to vote
@@ -44,7 +44,7 @@ block voting
             li.list-group-item Pledged money
               span.badge.pull-right $ #{userVote}
           div.btn-group(role='group')
-            form(action='/idea/' + idea.id + '/vote' method='post')
+            form(action='/demo/idea/' + idea.id + '/vote' method='post')
               div.form-group
                 button.btn.btn-primary(type='submit' name='vote'
                                        value='0')= removeHeader
@@ -77,7 +77,7 @@ block voting
 
                 div(class="tab-content")
                   div(role="tabpanel" class="tab-pane #{pledgeclass}" id="pledge")
-                    form(action='/idea/' + idea.id + '/vote' method='post')
+                    form(action='/demo/idea/' + idea.id + '/vote' method='post')
                       div.form-group
                         label(for='vote') Pledge amount
                         p How much money will you commit for the development of this app if it reaches the prototype stage?
@@ -91,7 +91,7 @@ block voting
                         button.btn.btn-primary(type='submit') Submit
 
                   div(role="tabpanel" class="tab-pane #{dislikeclass}" id="dislike")
-                    form(action='/idea/' + idea.id + '/vote' method='post')
+                    form(action='/demo/idea/' + idea.id + '/vote' method='post')
                       div.form-group
                         label(for='vote') Why don't you like this idea?
                         select.form-control#defaultVote(name='vote')

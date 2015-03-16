@@ -27,11 +27,11 @@ block content
       for dev in devs
         li.list-group-item
           if (dev.name == 'Madhav Murthy')
-            a(href='/profile/madhav')
+            a(href='/demo/profile/madhav')
               img#profilepic(src='#{dev.profile_pic_url}' alt='profile pic') 
               span.bold(style='margin-left: 0.5em')= dev.name
           else if (dev.name == 'Garrett Halls')
-            a(href='/profile/garrett')
+            a(href='/demo/profile/garrett')
               img#profilepic(src='#{dev.profile_pic_url}' alt='profile pic') 
               span.bold(style='margin-left: 0.5em')= dev.name
           else
