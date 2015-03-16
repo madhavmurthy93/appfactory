@@ -22,7 +22,7 @@ var SCREENSHOT_SIZE = {
 router.get('/', function(req, res, next) {
     if (!res.locals.user) {
 	// The user isn't logged in.  Redirect to the login page.
-	res.redirect('/auth/facebook');
+	res.redirect('/demo/auth/facebook');
 	return;
     }
 
@@ -128,7 +128,7 @@ router.post('/',
 		if (res.locals.user) {
 		    ownerId = res.locals.user.id;
 		} else {
-		    res.redirect('/auth/facebook');
+		    res.redirect('/demo/auth/facebook');
 		    return;
 		}
 
@@ -142,7 +142,7 @@ router.post('/',
 			image = imageIn;
 			return InsertIntoDb(req, ideaId, image, ownerId);
 		    }).then(function() {
-			res.redirect('/idea/' + ideaId);
+			res.redirect('/demo/idea/' + ideaId);
 		    }).catch(next);  // Pass errors to the error handler.
 	    });
 
@@ -401,7 +401,7 @@ var HandlePostScreen = function(req, res, next) {
 		    return sql.SimpleQueryPromise(
 			'UPDATE ideas SET thumbnail=? WHERE id=?',
 			[image, ideaId]).then(function() {
-			    res.redirect('/idea/' + ideaId);
+			    res.redirect('/demo/idea/' + ideaId);
 			});
 		});
 	} else {
@@ -429,7 +429,7 @@ var HandlePostScreen = function(req, res, next) {
 						  + 'VALUES (?,?,?)',
 						  [imageId, ideaId, image]);
 		}).then(function() {
-		    res.redirect('/idea/' + ideaId);
+		    res.redirect('/demo/idea/' + ideaId);
 		}).catch(next);  // Pass errors to the error handler.
 	}
     });
@@ -556,7 +556,7 @@ router.post('/:ideaId/comment', function(req, res, next) {
     sql.SimpleQueryPromise('INSERT INTO comments (user, idea, contents) VALUES (?, ?, ?)',
     		[res.locals.user.id, ideaId, comment])
 	.then(function() {
-    	    res.redirect('/idea/' + ideaId);
+    	    res.redirect('/demo/idea/' + ideaId);
 	}).catch(next);  // Pass errors to the error handler.
 });
 
@@ -594,7 +594,7 @@ router.post('/:ideaId/vote', function(req, res, next) {
 		+ 'amount=VALUES(amount)', data);
     }
     query.then(function() {
-	res.redirect('/idea/' + ideaId);
+	res.redirect('/demo/idea/' + ideaId);
     }).catch(next);  // Pass errors to the error handler.
 });
 
@@ -621,7 +621,7 @@ router.post('/:ideaId/devvote', function(req, res, next) {
 			+ 'available_time_per_week=VALUES(available_time_per_week), '
 			+ 'available_duration_weeks=VALUES(available_duration_weeks)', data)
 	.then(function() {
-		res.redirect('/idea/' + ideaId);
+		res.redirect('/demo/idea/' + ideaId);
 	}).catch(next);  // Pass errors to the error handler.
 });
 

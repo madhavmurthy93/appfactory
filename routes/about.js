@@ -12,7 +12,7 @@ router.post('/', function(req, res, next) {
 		 comment: req.body.comment};
     sql.SimpleQueryPromise('INSERT INTO contact_us_emails SET ?', entry)
 	.then(function() {
-    	    res.redirect('/about');
+    	    res.redirect('/demo/about');
 	}).catch(next);  // Pass errors to the error handler.
 });
 
