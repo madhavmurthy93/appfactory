@@ -49,6 +49,13 @@ app.use(function(req, res, next) {
     next();
 });
 
+// Log information about each request.
+app.use(function(req, res, next) {
+    console.log('Request referer:', req.headers['referer']);
+    console.log('Request user-agent:', req.headers['user-agent']);
+    next();
+});
+
 app.use('/', walkthrough);
 app.use('/demo/', index);
 app.use('/demo/about', about);
